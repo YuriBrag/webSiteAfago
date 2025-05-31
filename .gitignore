@@ -1,0 +1,111 @@
+# Python / Flask Backend
+# -----------------------------------------------------------------------------
+# Ambientes virtuais
+backend/venv/
+backend/env/
+backend/.venv/
+backend/.env/
+
+# Arquivos compilados do Python
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+
+# Arquivos de distribuição/build do Python
+backend/dist/
+backend/build/ # Se o backend tiver um processo de build separado
+backend/*.egg-info/
+backend/.eggs/
+backend/eggs/
+backend/parts/
+backend/var/
+backend/sdist/
+backend/wheelhouse/
+backend/develop-eggs/
+backend/*.manifest
+backend/*.spec
+
+# Notebooks Jupyter (se usar)
+backend/.ipynb_checkpoints
+
+# Testes
+backend/.pytest_cache/
+backend/.tox/
+backend/htmlcov/
+backend/.coverage
+backend/.cache
+
+# Node.js / React Frontend
+# (Regras do seu frontend/.gitignore original, ajustadas com prefixo 'frontend/')
+# -----------------------------------------------------------------------------
+# Logs
+frontend/logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/lerna-debug.log*
+frontend/.pnpm-debug.log*
+
+# Cache de dependências e arquivos de lock
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+frontend/.yarn/install-state.gz
+
+# Diretórios de build do frontend
+frontend/build/
+frontend/dist/ # Algumas ferramentas de build usam 'dist'
+frontend/.next/ # Se usar Next.js no futuro
+frontend/.nuxt/ # Se usar Nuxt.js no futuro
+frontend/.svelte-kit/ # Se usar SvelteKit no futuro
+
+# Testes do frontend
+frontend/coverage/
+frontend/.jest-cache
+
+# Arquivos de ambiente local do frontend (MUITO IMPORTANTE IGNORAR)
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/.env*.local
+frontend/.env # Se tiver um .env geral para o frontend
+
+# Arquivos diversos do frontend
+frontend/.DS_Store # Específico para macOS, mas bom ter
+frontend/Thumbs.db # Específico para Windows
+
+# IDE / Editor / OS
+# -----------------------------------------------------------------------------
+# Geral
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains (PyCharm, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Outros
+*.swp
+*~
+*.bak
+*.tmp
+
+# Arquivos de configuração de ambiente globais (se não estiverem já cobertos)
+# Se você tiver um .env na raiz para o backend, por exemplo:
+.env
+.env.local
