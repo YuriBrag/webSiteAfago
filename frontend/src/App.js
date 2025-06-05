@@ -77,7 +77,73 @@ function LandingPage() {
   );
 }
 
-function forms() {
+function Perguntas() {
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+      <header className="text-center mb-10">
+        <h1 className="text-5xl font-bold text-purple-600">Submissão de Formulário</h1>
+      </header>
+      <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg ">
+        <p className="text-gray-700 mb-6 text-ellipsis">
+          
+          
+        <h2>Qual foi a efetividade observada? (em uma escala de 0 a 5)</h2>
+
+        <form id="formSatisfacao">
+          <div class="escala">
+            <label><input type="radio" name="efetividade" value="0" /> 0 </label>
+            <label><input type="radio" name="efetividade" value="1" /> 1 </label>
+            <label><input type="radio" name="efetividade" value="2" /> 2 </label>
+            <label><input type="radio" name="efetividade" value="3" /> 3 </label>
+            <label><input type="radio" name="efetividade" value="4" /> 4 </label>
+            <label><input type="radio" name="efetividade" value="5" /> 5 </label>
+          </div>
+        <br/>
+        <h3>Qual o estado da planta após a aplicação?</h3>
+        <div class="estado">
+          <label><input type="radio" name="saude" value="Sadia"/> Sadia </label><br />
+          <label><input type="radio" name="saude" value="Sintomática"/> Sintomática </label>
+        </div>
+        <br/>
+        <h4>Houve ocorrencia de pragas após a aplicação?</h4>
+        <div class="pragas">
+          <label><input type="radio" name="houve_pragas" value="Sim"/> Sim </label><br />
+          <label><input type="radio" name="houve_pragas" value="Não"/> Não </label><br />
+          <input type="text"  class=" rounded-md w-80 p-2 focus:outline-none focus:ring-2 focus:ring-blue-300 "
+           id="resposta" name="resposta" rows="1" cols="40" placeholder="Se sim, quais?"></input><br />
+        </div>
+
+        </form>
+        <br/>
+        <h5>Qual o seu nível de satisfação geral? (em uma escala de 0 a 5)</h5>
+        <div class="satisfacao_geral">
+            <label><input type="radio" name="satisfacao" value="0" /> 0 </label>
+            <label><input type="radio" name="satisfacao" value="1" /> 1 </label>
+            <label><input type="radio" name="satisfacao" value="2" /> 2 </label>
+            <label><input type="radio" name="satisfacao" value="3" /> 3 </label>
+            <label><input type="radio" name="satisfacao" value="4" /> 4 </label>
+            <label><input type="radio" name="satisfacao" value="5" /> 5 </label>
+        </div>
+        <br/>
+        <div className="text-center">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out"
+          >
+            Enviar
+          </button>
+          <div id="respostaUsuario" className="mt-4 text-white font-medium"></div>
+        </div>
+        </p>
+      </main>
+       <footer className="mt-10 text-center text-gray-500">
+        <p>&copy; {new Date().getFullYear()} A.fago. Todos os direitos reservados.</p>
+      </footer>
+    </div>
+  );
+}
+
+function Forms() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
       <header className="text-center mb-10">
@@ -85,17 +151,17 @@ function forms() {
       </header>
       <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
         <p className="text-gray-700 mb-6">
-          Essa é a página de formulários
+          Esta é a página de formulários
         </p>
         <Link
-          to="/"
+          to="/responder-formulario"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out inline-block"
         >
-          Voltar para Landing Page
+          Responder formulário
         </Link>
       </main>
        <footer className="mt-10 text-center text-gray-500">
-        <p>&copy; {new Date().getFullYear()} Sua Empresa. Todos os direitos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} A.fago. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
@@ -131,7 +197,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/formularios" element={<forms />} />
+        <Route path="/formularios" element={<Forms />} />
+        <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
       </Routes>
     </Router>
