@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import icone from '../assets/icone.png'; // Se for usar o ícone como logo
+import icone from '../assets/icone.png'; 
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar o menu mobile
@@ -11,9 +11,8 @@ function Navbar() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="text-3xl sm:text-4xl font-bold text-white">
-              A.Fago
-              {/* <img src={icone} alt="Logo" className="h-12 sm:h-16 w-auto" /> {/* Exemplo se fosse usar imagem */}
+            <Link to="/" className="text-3xl sm:text-4xl font-bold">
+              <img src={icone} alt="Logo" className="h-12 sm:h-16 w-auto" /> {/* Exemplo se fosse usar imagem */}
             </Link>
           </div>
 
