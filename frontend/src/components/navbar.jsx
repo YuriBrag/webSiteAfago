@@ -34,6 +34,12 @@ function Navbar() {
             Contato
           </Link>
           <Link 
+            to="/formularios" 
+            className="text-white text-lg font-semibold hover:text-gray-300 transition-colors duration-300"
+          >
+            Formulários
+          </Link>
+          <Link 
             to="/entrar" 
             className="text-white text-lg font-semibold hover:text-gray-300 transition-colors duration-300"
           >
