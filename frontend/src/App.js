@@ -17,7 +17,6 @@ function LandingPage() {
 	useEffect(() => {
 		fetch("/api/hello")
 			.then((response) => {
-				console.log("Status da resposta da API:", response.status);
 				const contentType = response.headers.get("content-type");
 				if (
 					response.ok &&
@@ -26,12 +25,7 @@ function LandingPage() {
 				) {
 					return response.json();
 				}
-
 				return response.text().then((text) => {
-					console.error(
-						"Resposta da API não era JSON. Conteúdo recebido:",
-						text
-					);
 					if (text.startsWith("<!DOCTYPE html>")) {
 						throw new Error(
 							"Recebido HTML em vez de JSON. Verifique o proxy e se o servidor backend está rodando na porta correta e acessível em /api/hello."
@@ -49,32 +43,27 @@ function LandingPage() {
 				setErrorInfo("");
 			})
 			.catch((error) => {
-				console.error("Erro detalhado ao buscar dados:", error);
 				setErrorInfo(`Erro ao carregar dados: ${error.message}`);
 				if (!message) setMessage("Falha ao conectar com o backend.");
 			});
-	}, []); // Removido 'message' da dependência para evitar loops desnecessários
+	}, []);
 
 	return (
 		<div className="min-h-screen flex flex-col font-sans min-w-[360px]">
-			{/* Hero com efeito parallax */}
+			{/* Hero com efeito parallax desativado no mobile */}
 			<div
-				className="w-full min-h-screen bg-cover bg-center relative md:bg-fixed bg-no-repeat flex flex-col justify-center items-center"
+				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+				bg-contain md:bg-cover md:bg-fixed"
 				style={{ backgroundImage: `url(${backgroundImage1})` }}
 			>
-				{/* Overlay */}
 				<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-
-				{/* Conteúdo hero */}
 				<header className="relative z-10 mb-8 sm:mb-12 w-full p-4">
 					<h2 className="text-2xl sm:text-4xl lg:text-5xl font-medium text-white">
-						Biotecnologia inteligente <br />
-						para um futuro sustentável
+						Biotecnologia inteligente <br /> para um futuro sustentável
 					</h2>
 				</header>
 			</div>
 
-			{/* Conteúdo principal */}
 			<div className="flex flex-col md:flex-row items-center md:items-start gap-6 lg:gap-10 bg-transparent p-0 sm:p-4 md:p-6 rounded-lg w-full max-w-5xl lg:max-w-6xl mx-auto">
 				<div className="w-full md:w-2/5 flex justify-center md:justify-start mb-6 md:mb-0">
 					<img
@@ -92,12 +81,6 @@ function LandingPage() {
 						Somos uma empresa de soluções agrícolas para .... (Conteúdo mais
 						longo aqui ficaria melhor para testar a altura)
 					</p>
-					{/*<Link
-						to="/"
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition duration-300 ease-in-out inline-block text-sm sm:text-base"
-					>
-						Saiba mais
-					</Link>*/}
 
 					{errorInfo ? (
 						<p className="text-sm sm:text-base font-medium text-red-500 bg-red-100 p-3 rounded-md">
@@ -118,34 +101,22 @@ function LandingPage() {
 				<p className="text-gray-600 mb-4 text-sm sm:text-base min-h-[80px] sm:min-h-[100px]">
 					Lorem ipsum dolor sit amet. Eos odio distinctio aut internos neque et
 					quod quasi ea repudiandae quod. Aut sint provident et cupiditate
-					soluta ut ipsam expedita et maiores magnam. Quo praesentium labore quo
-					ducimus vitae quo aperiam obcaecati eum internos adipisci in quia
-					reiciendis. In fugiat quos et accusamus dolorem et veritatis sint est
-					quibusdam omnis eos iste accusamus sed cumque eaque. Qui quis incidunt
-					et dolores corrupti est dicta officia et quos inventore et numquam
-					magnam ut eaque eaque et dolor debitis. Sed sunt commodi ut facilis
-					tenetur est cumque nulla a perferendis facere qui facilis veritatis 33
-					minima fugiat sed voluptatibus dicta!
+					soluta ut ipsam expedita et maiores magnam...
 				</p>
 			</div>
 
-			{/* Hero com efeito parallax */}
+			{/* Segundo Hero com ajuste para mobile */}
 			<div
-				className="w-full min-h-screen bg-cover bg-center relative md:bg-fixed bg-no-repeat flex flex-col justify-center items-center"
+				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+				bg-contain md:bg-cover md:bg-fixed"
 				style={{ backgroundImage: `url(${backgroundImage2})` }}
 			>
-				{/* Overlay */}
 				<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-
-				{/* Conteúdo hero */}
 				<header className="relative z-10 text-center mb-8 sm:mb-12 w-full p-4">
 					<p className="text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6">
 						Lorem ipsum dolor sit amet. Et porro aliquam eos fugit
 						necessitatibus qui vitae cupiditate sit dolores laudantium aut
-						consequatur quibusdam et necessitatibus quia in dolor consequuntur?
-						Qui iusto neque At voluptates minus et alias eligendi et
-						necessitatibus impedit. Et ipsa corporis in natus aspernatur cum
-						sapiente sunt est sequi nemo.
+						consequatur quibusdam...
 					</p>
 				</header>
 			</div>
@@ -154,7 +125,6 @@ function LandingPage() {
 				<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">
 					Perspectivas futuras
 				</h2>
-				
 			</div>
 
 			<footer className="mt-auto pt-10 pb-6 text-center text-gray-500 text-sm w-full">
@@ -170,11 +140,8 @@ function LandingPage() {
 // OutraPagina Component
 function OutraPagina() {
 	return (
-		// Adicionado min-w-[360px]
 		<div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center pt-20 md:pt-24 p-4 font-sans min-w-[360px]">
 			<header className="text-center mb-8 sm:mb-10 w-full">
-				{" "}
-				{/* Adicionado w-full */}
 				<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600">
 					Esta é Outra Página
 				</h1>
@@ -191,8 +158,6 @@ function OutraPagina() {
 				</Link>
 			</main>
 			<footer className="mt-auto pt-10 pb-6 text-center text-gray-500 text-sm w-full">
-				{" "}
-				{/* Adicionado w-full */}
 				<p>
 					&copy; {new Date().getFullYear()} Sua Empresa. Todos os direitos
 					reservados.
@@ -202,12 +167,11 @@ function OutraPagina() {
 	);
 }
 
-// App Component (permanece o mesmo)
+// App Component
 function App() {
 	return (
 		<Router>
-			<Navbar />{" "}
-			{/* Navbar está fora dos containers com min-w, ela se ajustará à viewport */}
+			<Navbar />
 			<Routes>
 				<Route path="/" element={<LandingPage />} />
 				<Route path="/outra-pagina" element={<OutraPagina />} />

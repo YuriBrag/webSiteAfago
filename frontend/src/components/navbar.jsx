@@ -38,7 +38,7 @@ function Navbar() {
 					<div className="hidden md:flex flex-1 justify-center space-x-6">
 						<Link
 							to="/"
-							className={`text-base lg:text-lg font-semibold transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
 									: "text-white"
@@ -49,7 +49,7 @@ function Navbar() {
 						</Link>
 						<Link
 							to="/outra-pagina"
-							className={`text-base lg:text-lg font-semibold transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
 									: "text-white"
@@ -60,7 +60,7 @@ function Navbar() {
 						</Link>
 						<Link
 							to="/servicos"
-							className={`text-base lg:text-lg font-semibold transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
 									: "text-white"
@@ -71,7 +71,7 @@ function Navbar() {
 						</Link>
 						<Link
 							to="/contato"
-							className={`text-base lg:text-lg font-semibold transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
 									: "text-white"
@@ -144,28 +144,28 @@ function Navbar() {
 				<div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-brand-green">
 					<Link
 						to="/"
-						className="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-semibold transition-colors duration-300"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
 						Início
 					</Link>
 					<Link
 						to="/outra-pagina"
-						className="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-semibold transition-colors duration-300"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
 						A.Fago
 					</Link>
 					<Link
 						to="/servicos"
-						className="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-semibold transition-colors duration-300"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
 						Serviços
 					</Link>
 					<Link
 						to="/contato"
-						className="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-semibold transition-colors duration-300"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
 						Contato
