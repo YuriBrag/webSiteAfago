@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import icone from "./assets/icone.png";
-import backgroundImage from "./assets/background_lp.jpg";
+import backgroundImage1 from "./assets/background_lp.jpg";
+import backgroundImage2 from "./assets/background_lp_2.jpg";
 
 // LandingPage Component
 function LandingPage() {
@@ -59,16 +60,17 @@ function LandingPage() {
 			{/* Hero com efeito parallax */}
 			<div
 				className="w-full min-h-screen bg-cover bg-center relative md:bg-fixed bg-no-repeat flex flex-col justify-center items-center"
-				style={{ backgroundImage: `url(${backgroundImage})` }}
+				style={{ backgroundImage: `url(${backgroundImage1})` }}
 			>
 				{/* Overlay */}
 				<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
 
 				{/* Conteúdo hero */}
-				<header className="relative z-10 text-center mb-8 sm:mb-12 w-full p-4">
-					<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-						Bem-vindo à Nossa Landing Page!
-					</h1>
+				<header className="relative z-10 mb-8 sm:mb-12 w-full p-4">
+					<h2 className="text-2xl sm:text-4xl lg:text-5xl font-medium text-white">
+						Biotecnologia inteligente <br />
+						para um futuro sustentável
+					</h2>
 				</header>
 			</div>
 
@@ -90,6 +92,12 @@ function LandingPage() {
 						Somos uma empresa de soluções agrícolas para .... (Conteúdo mais
 						longo aqui ficaria melhor para testar a altura)
 					</p>
+					{/*<Link
+						to="/"
+						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition duration-300 ease-in-out inline-block text-sm sm:text-base"
+					>
+						Saiba mais
+					</Link>*/}
 
 					{errorInfo ? (
 						<p className="text-sm sm:text-base font-medium text-red-500 bg-red-100 p-3 rounded-md">
@@ -101,6 +109,52 @@ function LandingPage() {
 						</p>
 					)}
 				</main>
+			</div>
+
+			<div className="flex flex-col items-center bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full text-center md:text-left">
+				<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">
+					Áreas de atuação
+				</h2>
+				<p className="text-gray-600 mb-4 text-sm sm:text-base min-h-[80px] sm:min-h-[100px]">
+					Lorem ipsum dolor sit amet. Eos odio distinctio aut internos neque et
+					quod quasi ea repudiandae quod. Aut sint provident et cupiditate
+					soluta ut ipsam expedita et maiores magnam. Quo praesentium labore quo
+					ducimus vitae quo aperiam obcaecati eum internos adipisci in quia
+					reiciendis. In fugiat quos et accusamus dolorem et veritatis sint est
+					quibusdam omnis eos iste accusamus sed cumque eaque. Qui quis incidunt
+					et dolores corrupti est dicta officia et quos inventore et numquam
+					magnam ut eaque eaque et dolor debitis. Sed sunt commodi ut facilis
+					tenetur est cumque nulla a perferendis facere qui facilis veritatis 33
+					minima fugiat sed voluptatibus dicta!
+				</p>
+			</div>
+
+			{/* Hero com efeito parallax */}
+			<div
+				className="w-full min-h-screen bg-cover bg-center relative md:bg-fixed bg-no-repeat flex flex-col justify-center items-center"
+				style={{ backgroundImage: `url(${backgroundImage2})` }}
+			>
+				{/* Overlay */}
+				<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+
+				{/* Conteúdo hero */}
+				<header className="relative z-10 text-center mb-8 sm:mb-12 w-full p-4">
+					<p className="text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6">
+						Lorem ipsum dolor sit amet. Et porro aliquam eos fugit
+						necessitatibus qui vitae cupiditate sit dolores laudantium aut
+						consequatur quibusdam et necessitatibus quia in dolor consequuntur?
+						Qui iusto neque At voluptates minus et alias eligendi et
+						necessitatibus impedit. Et ipsa corporis in natus aspernatur cum
+						sapiente sunt est sequi nemo.
+					</p>
+				</header>
+			</div>
+
+			<div className="flex flex-col items-center bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full text-center md:text-left">
+				<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">
+					Perspectivas futuras
+				</h2>
+				
 			</div>
 
 			<footer className="mt-auto pt-10 pb-6 text-center text-gray-500 text-sm w-full">

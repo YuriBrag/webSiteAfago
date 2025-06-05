@@ -10,7 +10,7 @@ module.exports = {
         'brand-green': '#2C543C',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'], 
+        sans: ['Montserrat', 'sans-serif'], 
       },
     },
   },
