@@ -78,6 +78,7 @@ function LandingPage() {
 }
 
 function Perguntas() {
+  const [houvePragas, setHouvePragas] = useState('');
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
       <header className="text-center mb-10">
@@ -90,40 +91,110 @@ function Perguntas() {
         <h2>Qual foi a efetividade observada? (em uma escala de 0 a 5)</h2>
 
         <form id="formSatisfacao">
-          <div class="escala">
-            <label><input type="radio" name="efetividade" value="0" /> 0 </label>
-            <label><input type="radio" name="efetividade" value="1" /> 1 </label>
-            <label><input type="radio" name="efetividade" value="2" /> 2 </label>
-            <label><input type="radio" name="efetividade" value="3" /> 3 </label>
-            <label><input type="radio" name="efetividade" value="4" /> 4 </label>
-            <label><input type="radio" name="efetividade" value="5" /> 5 </label>
+          <div className="flex gap-2 justify-center my-4">
+            {Array.from({ length: 6 }, (_, i) => (
+              <label
+                key={i}
+                className="cursor-pointer px-4 py-2 bg-gray-200 rounded-lg hover:bg-purple-200 transition duration-200"
+              >
+                <input
+                  type="radio"
+                  name="efetividade"
+                  value={i}
+                  className="hidden peer"
+                />
+                <span className="peer-checked:bg-purple-600 peer-checked:text-white px-2 py-1 rounded">
+                  {i}
+                </span>
+              </label>
+            ))}
           </div>
         <br/>
         <h3>Qual o estado da planta após a aplicação?</h3>
-        <div class="estado">
-          <label><input type="radio" name="saude" value="Sadia"/> Sadia </label><br />
-          <label><input type="radio" name="saude" value="Sintomática"/> Sintomática </label>
+        <div className="estado flex gap-4 justify-center mt-4">
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="saude"
+              value="Sadia"
+              className="hidden peer"
+            />
+            <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+            <span className="text-gray-700 peer-checked:font-semibold">Sadia</span>
+          </label>
+
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="saude"
+              value="Sintomática"
+              className="hidden peer"
+            />
+            <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+            <span className="text-gray-700 peer-checked:font-semibold">Sintomática</span>
+          </label>
         </div>
         <br/>
-        <h4>Houve ocorrencia de pragas após a aplicação?</h4>
-        <div class="pragas">
-          <label><input type="radio" name="houve_pragas" value="Sim"/> Sim </label><br />
-          <label><input type="radio" name="houve_pragas" value="Não"/> Não </label><br />
-          <input type="text"  class=" rounded-md w-80 p-2 focus:outline-none focus:ring-2 focus:ring-blue-300 "
-           id="resposta" name="resposta" rows="1" cols="40" placeholder="Se sim, quais?"></input><br />
-        </div>
+        <h4 className="mt-6">Houve ocorrência de pragas após a aplicação?</h4>
+          <div className="pragas mt-2">
+            <div className="flex gap-4 justify-center mb-2">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="houve_pragas"
+                  value="Sim"
+                  onChange={() => setHouvePragas('Sim')}
+                  className="hidden peer"
+                />
+                <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+                <span className="text-gray-700 peer-checked:font-semibold">Sim</span>
+              </label>
+
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="houve_pragas"
+                  value="Não"
+                  onChange={() => setHouvePragas('Não')}
+                  className="hidden peer"
+                />
+                <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+                <span className="text-gray-700 peer-checked:font-semibold">Não</span>
+              </label>
+            </div>
+
+            {houvePragas === 'Sim' && (
+              <input
+                type="text"
+                className="rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                id="resposta"
+                name="resposta"
+                placeholder="Se sim, quais?"
+              />
+            )}
+          </div>
 
         </form>
         <br/>
         <h5>Qual o seu nível de satisfação geral? (em uma escala de 0 a 5)</h5>
-        <div class="satisfacao_geral">
-            <label><input type="radio" name="satisfacao" value="0" /> 0 </label>
-            <label><input type="radio" name="satisfacao" value="1" /> 1 </label>
-            <label><input type="radio" name="satisfacao" value="2" /> 2 </label>
-            <label><input type="radio" name="satisfacao" value="3" /> 3 </label>
-            <label><input type="radio" name="satisfacao" value="4" /> 4 </label>
-            <label><input type="radio" name="satisfacao" value="5" /> 5 </label>
-        </div>
+        <div className="flex gap-2 justify-center my-4">
+            {Array.from({ length: 6 }, (_, i) => (
+              <label
+                key={i}
+                className="cursor-pointer px-4 py-2 bg-gray-200 rounded-lg hover:bg-purple-200 transition duration-200"
+              >
+                <input
+                  type="radio"
+                  name="satisfacao"
+                  value={i}
+                  className="hidden peer"
+                />
+                <span className="peer-checked:bg-purple-600 peer-checked:text-white px-2 py-1 rounded">
+                  {i}
+                </span>
+              </label>
+            ))}
+          </div>
         <br/>
         <div className="text-center">
           <button
