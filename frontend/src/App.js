@@ -166,7 +166,7 @@ function Perguntas() {
             {houvePragas === 'Sim' && (
               <input
                 type="text"
-                className="rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="rounded-md w-full border border-black/50 p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 id="resposta"
                 name="resposta"
                 placeholder="Se sim, quais?"
