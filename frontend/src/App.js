@@ -5,13 +5,6 @@ import icone from "./assets/icone.png";
 import backgroundImage1 from "./assets/background_lp.jpg";
 import backgroundImage2 from "./assets/background_lp_2.jpg";
 
-
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Navbar from './components/navbar.jsx';
-import icone from './assets/icone.png'; 
-
-
 import EntrarPage from './pages/EntrarPage.js';
 import ProfilePage from './pages/ProfilePage.js';
 import ProtectedRoute from './components/ProtectedRoute.js';
