@@ -5,7 +5,17 @@ import icone from "./assets/icone.png";
 import backgroundImage1 from "./assets/background_lp.jpg";
 import backgroundImage2 from "./assets/background_lp_2.jpg";
 
-// LandingPage Component
+
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Navbar from './components/navbar.jsx';
+import icone from './assets/icone.png'; 
+
+
+import EntrarPage from './pages/EntrarPage.js';
+import ProfilePage from './pages/ProfilePage.js';
+import ProtectedRoute from './components/ProtectedRoute.js';
+
 function LandingPage() {
 	const [message, setMessage] = useState("");
 	const [errorInfo, setErrorInfo] = useState("");
@@ -295,6 +305,14 @@ function Forms() {
   );
 }
 
+const RelatoriosPage = () => (
+  <div className="container mx-auto p-8 pt-24">
+    <h1 className="text-4xl font-bold">Página de Relatórios</h1>
+    <p className="mt-4">Aqui serão exibidos os relatórios.</p>
+  </div>
+);
+
+
 function OutraPagina() {
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center pt-20 md:pt-24 p-4 font-sans min-w-[360px]">
@@ -324,7 +342,6 @@ function OutraPagina() {
 	);
 }
 
-// App Component
 function App() {
 
   return (
@@ -335,6 +352,15 @@ function App() {
         <Route path="/formularios" element={<Forms />} />
         <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
+        <Route path="/entrar" element={<EntrarPage />} />
+
+        {/*Rotas Protegidas*/}
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/relatorios" element={<RelatoriosPage />} />
+          {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
+        </Route>
       </Routes>
     </Router>
   );
