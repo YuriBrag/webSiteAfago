@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/navbar.jsx';
 import icone from './assets/icone.png'; 
+import EntrarPage from './pages/EntrarPage.js';
 
 function LandingPage() {
   const [message, setMessage] = useState('');
@@ -108,6 +109,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
+        <Route path="/entrar" element={<EntrarPage />} />
       </Routes>
     </Router>
   );
