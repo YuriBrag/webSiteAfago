@@ -48,7 +48,7 @@ function EntrarPage() {
         throw new Error('Token não recebido do servidor.');
       }
       
-      navigate('/'); // Redireciona para a home ou para um dashboard
+      navigate('/perfil'); // Redireciona para a home ou para um dashboard
 
       // REMOVA OU COMENTE O BLOCO setTimeout ABAIXO:
       /*

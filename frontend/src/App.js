@@ -3,7 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/navbar.jsx';
 import icone from './assets/icone.png'; 
+
+
 import EntrarPage from './pages/EntrarPage.js';
+import ProfilePage from './pages/ProfilePage.js';
+import ProtectedRoute from './components/ProtectedRoute.js';
 
 function LandingPage() {
   const [message, setMessage] = useState('');
@@ -102,6 +106,13 @@ function OutraPagina() {
   );
 }
 
+const RelatoriosPage = () => (
+  <div className="container mx-auto p-8 pt-24">
+    <h1 className="text-4xl font-bold">Página de Relatórios</h1>
+    <p className="mt-4">Aqui serão exibidos os relatórios.</p>
+  </div>
+);
+
 function App() {
   return (
     <Router>
@@ -110,6 +121,14 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
         <Route path="/entrar" element={<EntrarPage />} />
+
+        {/*Rotas Protegidas*/}
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/relatorios" element={<RelatoriosPage />} />
+          {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
+        </Route>
       </Routes>
     </Router>
   );
