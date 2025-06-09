@@ -69,6 +69,17 @@ function Navbar() {
 						>
 							Serviços
 						</Link>
+            <Link
+							to="/formularios"
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+								isScrolled
+									? "text-gray-800"
+									: "text-white"
+							}`}
+							onClick={() => setIsOpen(false)}
+						>
+							Formularios
+						</Link>
 						<Link
 							to="/contato"
 							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
@@ -79,6 +90,17 @@ function Navbar() {
 							onClick={() => setIsOpen(false)}
 						>
 							Contato
+						</Link>
+            <Link
+							to="/entrar"
+							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
+								isScrolled
+									? "text-gray-800"
+									: "text-white"
+							}`}
+							onClick={() => setIsOpen(false)}
+						>
+							Entrar
 						</Link>
 					</div>
 
@@ -163,12 +185,26 @@ function Navbar() {
 					>
 						Serviços
 					</Link>
+          <Link
+						to="/formularios"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
+						onClick={() => setIsOpen(false)}
+					>
+						Formularios
+					</Link>
 					<Link
 						to="/contato"
 						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
 						Contato
+					</Link>
+          <Link
+						to="/entrar"
+						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
+						onClick={() => setIsOpen(false)}
+					>
+						Entrar
 					</Link>
 				</div>
 			</div>
