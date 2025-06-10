@@ -1,14 +1,12 @@
-// frontend/src/pages/EntrarPage.js
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import backgroundImage1 from '../assets/background_lp.jpg';
 
 function EntrarPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -26,74 +24,72 @@ function EntrarPage() {
       const responseData = await response.json();
       setLoading(false);
 
-      // Trata erros específicos de forma diferente
       if (!response.ok) {
-        if (response.status === 404) { // 404 Not Found
-          // Sugestão para criar conta
+        if (response.status === 404) {
           setError(
             <span>
-              Usuário não encontrado. <Link to="/registrar" className="font-bold underline">Crie uma conta.</Link>
+              Usuário não encontrado. <Link to="/registrar" className="font-bold underline hover:text-blue-500">Crie uma conta.</Link>
             </span>
           );
         } else {
-          // Outros erros (ex: senha incorreta)
           throw new Error(responseData.message || 'Falha no login.');
         }
-        return; // Para a execução aqui se houver erro
+        return;
       }
       
-      // Login bem-sucedido
-      localStorage.setItem('authToken', responseData.token);
-      localStorage.setItem('userName', responseData.userName);
+      // A CORREÇÃO ESTÁ AQUI: Garantir que todos os dados necessários são salvos.
+      if (responseData.token && responseData.userEmail) {
+          localStorage.setItem('authToken', responseData.token);
+          localStorage.setItem('userEmail', responseData.userEmail); // <-- PONTO CRÍTICO
+          if (responseData.userName) {
+              localStorage.setItem('userName', responseData.userName);
+          }
+      } else {
+          throw new Error('Resposta de login inválida do servidor.');
+      }
+      
       navigate('/perfil');
 
     } catch (err) {
       setLoading(false);
-      // Pega erros de rede ou os que foram lançados manualmente
       setError(err.message);
     }
   };
 
-  // O seu JSX para o formulário permanece o mesmo, mas agora
-  // o {error} pode renderizar um link clicável.
   return (
-     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4 pt-20">
-      <div className="bg-white p-8 md:p-10 rounded-lg shadow-xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Entrar na Plataforma
-        </h2>
-
-        {/* O estado de erro agora pode conter JSX com um link */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          {/* ... Seus campos de formulário ... */}
-           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 text-sm font-semibold mb-2">Email</label>
-            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                   className="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700" required />
-          </div>
-          <div className="mb-6">
-            <label htmlFor="password"  className="block text-gray-700 text-sm font-semibold mb-2">Senha</label>
-            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                   className="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700" required />
-          </div>
-          <button type="submit" disabled={loading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded">
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
-
-        <p className="text-center text-gray-600 text-sm mt-8">
-          Não tem uma conta?{' '}
-          <Link to="/registrar" className="font-semibold text-green-600 hover:text-green-800">
-            Crie uma agora
-          </Link>
-        </p>
+    <div
+      className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-fixed relative flex flex-col justify-center items-center p-4 pt-24"
+      style={{ backgroundImage: `url(${backgroundImage1})` }}
+    >
+      <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+      <div className="relative z-10 w-full flex justify-center">
+        <div className="w-full max-w-md bg-white p-8 md:p-10 rounded-lg shadow-xl">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Entrar na Plataforma</h2>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
+              {error}
+            </div>
+          )}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+              <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" required />
+            </div>
+            <div className="mb-6">
+              <label htmlFor="password"  className="block text-gray-700 text-sm font-semibold mb-2">Senha</label>
+              <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" required />
+            </div>
+            <button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
+          <p className="text-center text-gray-600 text-sm mt-8">
+            Não tem uma conta?{' '}
+            <Link to="/registrar" className="font-semibold text-green-600 hover:text-green-800">
+              Crie uma agora
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
