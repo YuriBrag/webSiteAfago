@@ -2,6 +2,7 @@ from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 import os
 import re 
+import datetime
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
@@ -99,6 +100,7 @@ def get_profile_data():
     except IOError:
         pass # O arquivo pode não existir ainda
 
+
     # Lê áreas
     try:
         areas_file_path = os.path.join(user_dir, 'areas.txt')
@@ -155,6 +157,51 @@ def add_area():
 
 
 # Rotas estáticas
+
+@app.route('/resp-formulario', methods=['POST'])
+def salvar_respostas():
+    data = request.json
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H%M%S")
+    filename = f"resposta_{timestamp}.txt"
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    pasta_respostas = "respostas_formularios"
+    os.makedirs(pasta_respostas, exist_ok=True)
+
+    caminho_arquivo = os.path.join(pasta_respostas, filename)
+
+    with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+        f.write("Horário: " + timestamp + "\n")
+        f.write("Efetividade: " + str(data.get('efetividade', '')) + "\n")
+        f.write("Estado da Planta: " + data.get('saude', '') + "\n")
+        f.write("Houve Pragas: " + data.get('houvePragas', '') + "\n")
+        f.write("Descrição das Pragas: " + data.get('resposta', '') + "\n")
+        f.write("Satisfação: " + str(data.get('satisfacao', '')) + "\n")
+
+    return jsonify({"message": "Respostas salvas com sucesso!"})
+
+@app.route('/listar-formularios', methods=['GET'])
+def listar_formularios():
+    pasta_respostas = "respostas_formularios"
+    formularios = []
+
+    if not os.path.exists(pasta_respostas):
+        return jsonify([])
+
+    for nome_arquivo in sorted(os.listdir(pasta_respostas), reverse=True):
+        caminho = os.path.join(pasta_respostas, nome_arquivo)
+        if os.path.isfile(caminho) and nome_arquivo.endswith(".txt"):
+            with open(caminho, 'r', encoding='utf-8') as f:
+                conteudo = f.read()
+                formularios.append({
+                    "nome": nome_arquivo,
+                    "conteudo": conteudo
+                })
+
+    return jsonify(formularios)
+
+# Rotas para servir o frontend React (mantidas como estão)
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
