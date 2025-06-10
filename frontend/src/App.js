@@ -76,14 +76,6 @@ function LandingPage() {
 					/>
 				</div>
 
-				<main className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full md:w-3/5 text-center md:text-left">
-					<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">
-						Sobre
-					</h2>
-					<p className="text-gray-600 mb-4 text-sm sm:text-base min-h-[80px] sm:min-h-[100px]">
-						Somos uma empresa de soluções agrícolas para .... (Conteúdo mais
-						longo aqui ficaria melhor para testar a altura)
-					</p>
         
          {errorInfo ? (
           <p className="text-lg font-medium text-red-500 bg-red-100 p-3 rounded-md">{errorInfo}</p>
@@ -136,9 +128,34 @@ function LandingPage() {
 	);
 }
 
-
 function Perguntas() {
+  const [efetividade, setEfetividade] = useState('');
+  const [saude, setSaude] = useState('');
   const [houvePragas, setHouvePragas] = useState('');
+  const [resposta, setResposta] = useState('');
+  const [satisfacao, setSatisfacao] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      efetividade,
+      saude,
+      houvePragas,
+      resposta: houvePragas === 'Sim' ? resposta : '',
+      satisfacao,
+    };
+
+    const response = await fetch('http://localhost:5000/resp-formulario', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    alert(data.message);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
       <header className="text-center mb-10">
@@ -150,7 +167,7 @@ function Perguntas() {
           
         <h2>Qual foi a efetividade observada? (em uma escala de 0 a 5)</h2>
 
-        <form id="formSatisfacao">
+        <form onSubmit={handleSubmit} id="formSatisfacao">
           <div className="flex gap-2 justify-center my-4">
             {Array.from({ length: 6 }, (_, i) => (
               <label
@@ -162,6 +179,7 @@ function Perguntas() {
                   name="efetividade"
                   value={i}
                   className="hidden peer"
+                  onChange={() => setEfetividade(i)}
                 />
                 <span className="peer-checked:bg-purple-600 peer-checked:text-white px-2 py-1 rounded">
                   {i}
@@ -172,55 +190,37 @@ function Perguntas() {
         <br/>
         <h3>Qual o estado da planta após a aplicação?</h3>
         <div className="estado flex gap-4 justify-center mt-4">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="saude"
-              value="Sadia"
-              className="hidden peer"
-            />
-            <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
-            <span className="text-gray-700 peer-checked:font-semibold">Sadia</span>
-          </label>
-
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="saude"
-              value="Sintomática"
-              className="hidden peer"
-            />
-            <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
-            <span className="text-gray-700 peer-checked:font-semibold">Sintomática</span>
-          </label>
+          {['Sadia', 'Sintomática'].map((estado) => (
+              <label key={estado} className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="saude"
+                  value={estado}
+                  className="hidden peer"
+                  onChange={() => setSaude(estado)}
+                />
+                <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+                <span className="text-gray-700 peer-checked:font-semibold">{estado}</span>
+              </label>
+            ))}
         </div>
         <br/>
         <h4 className="mt-6">Houve ocorrência de pragas após a aplicação?</h4>
           <div className="pragas mt-2">
             <div className="flex gap-4 justify-center mb-2">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="houve_pragas"
-                  value="Sim"
-                  onChange={() => setHouvePragas('Sim')}
-                  className="hidden peer"
-                />
-                <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
-                <span className="text-gray-700 peer-checked:font-semibold">Sim</span>
-              </label>
-
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="houve_pragas"
-                  value="Não"
-                  onChange={() => setHouvePragas('Não')}
-                  className="hidden peer"
-                />
-                <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
-                <span className="text-gray-700 peer-checked:font-semibold">Não</span>
-              </label>
+              {['Sim', 'Não'].map((res) => (
+                <label key={res} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="houve_pragas"
+                    value={res}
+                    className="hidden peer"
+                    onChange={() => setHouvePragas(res)}
+                  />
+                  <div className="w-5 h-5 rounded-full border-2 border-purple-600 mr-2 peer-checked:bg-purple-600 transition duration-200"></div>
+                  <span className="text-gray-700 peer-checked:font-semibold">{res}</span>
+                </label>
+              ))}
             </div>
 
             {houvePragas === 'Sim' && (
@@ -230,11 +230,13 @@ function Perguntas() {
                 id="resposta"
                 name="resposta"
                 placeholder="Se sim, quais?"
+                value={resposta}
+                onChange={(e) => setResposta(e.target.value)}
               />
             )}
           </div>
 
-        </form>
+        
         <br/>
         <h5>Qual o seu nível de satisfação geral? (em uma escala de 0 a 5)</h5>
         <div className="flex gap-2 justify-center my-4">
@@ -248,6 +250,7 @@ function Perguntas() {
                   name="satisfacao"
                   value={i}
                   className="hidden peer"
+                  onChange={() => setSatisfacao(i)}
                 />
                 <span className="peer-checked:bg-purple-600 peer-checked:text-white px-2 py-1 rounded">
                   {i}
@@ -265,6 +268,7 @@ function Perguntas() {
           </button>
           <div id="respostaUsuario" className="mt-4 text-white font-medium"></div>
         </div>
+        </form>
         </p>
       </main>
        <footer className="mt-10 text-center text-gray-500">
@@ -273,6 +277,8 @@ function Perguntas() {
     </div>
   );
 }
+
+export {Perguntas};
 
 function Forms() {
   return (
@@ -298,45 +304,31 @@ function Forms() {
   );
 }
 
-const RelatoriosPage = () => (
-  <div className="container mx-auto p-8 pt-24">
-    <h1 className="text-4xl font-bold">Página de Relatórios</h1>
-    <p className="mt-4">Aqui serão exibidos os relatórios.</p>
-  </div>
-);
-
-
 function OutraPagina() {
-	return (
-		<div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center pt-20 md:pt-24 p-4 font-sans min-w-[360px]">
-			<header className="text-center mb-8 sm:mb-10 w-full">
-				<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600">
-					Esta é Outra Página
-				</h1>
-			</header>
-			<main className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md text-center">
-				<p className="text-gray-700 mb-6 text-sm sm:text-base">
-					Conteúdo da outra página aqui.
-				</p>
-				<Link
-					to="/"
-					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition duration-300 ease-in-out inline-block text-sm sm:text-base"
-				>
-					Voltar para Landing Page
-				</Link>
-			</main>
-			<footer className="mt-auto pt-10 pb-6 text-center text-gray-500 text-sm w-full">
-				<p>
-					&copy; {new Date().getFullYear()} Sua Empresa. Todos os direitos
-					reservados.
-				</p>
-			</footer>
-		</div>
-	);
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+      <header className="text-center mb-10">
+        <h1 className="text-5xl font-bold text-purple-600">Esta é Outra Página</h1>
+      </header>
+      <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+        <p className="text-gray-700 mb-6">
+          Conteúdo da outra página aqui.
+        </p>
+        <Link
+          to="/"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out inline-block"
+        >
+          Voltar para Landing Page
+        </Link>
+      </main>
+       <footer className="mt-10 text-center text-gray-500">
+        <p>&copy; {new Date().getFullYear()} Sua Empresa. Todos os direitos reservados.</p>
+      </footer>
+    </div>
+  );
 }
 
 function App() {
-
   return (
     <Router>
       <Navbar />
@@ -345,18 +337,10 @@ function App() {
         <Route path="/formularios" element={<Forms />} />
         <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
-        <Route path="/entrar" element={<EntrarPage />} />
-
-        {/*Rotas Protegidas*/}
-
-        <Route element={<ProtectedRoute />}>
-          <Route path="/perfil" element={<ProfilePage />} />
-          <Route path="/relatorios" element={<RelatoriosPage />} />
-          {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
-        </Route>
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

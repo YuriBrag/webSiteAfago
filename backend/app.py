@@ -44,6 +44,28 @@ def login_test_save_to_file(): # Nome da função alterado para clareza
         print(f"Erro ao salvar dados no arquivo: {e}") # Log do erro no console do servidor
         return jsonify({"message": f"Erro interno ao tentar salvar dados: {str(e)}"}), 500
 
+@app.route('/resp-formulario', methods=['POST'])
+def salvar_respostas():
+    data = request.json
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H%M%S")
+    filename = f"resposta_{timestamp}.txt"
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    pasta_respostas = "respostas_formularios"
+    os.makedirs(pasta_respostas, exist_ok=True)
+
+    caminho_arquivo = os.path.join(pasta_respostas, filename)
+
+    with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+        f.write("Horário: " + timestamp + "\n")
+        f.write("Efetividade: " + str(data.get('efetividade', '')) + "\n")
+        f.write("Estado da Planta: " + data.get('saude', '') + "\n")
+        f.write("Houve Pragas: " + data.get('houvePragas', '') + "\n")
+        f.write("Descrição das Pragas: " + data.get('resposta', '') + "\n")
+        f.write("Satisfação: " + str(data.get('satisfacao', '')) + "\n")
+
+    return jsonify({"message": "Respostas salvas com sucesso!"})
+
 # Rotas para servir o frontend React (mantidas como estão)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
