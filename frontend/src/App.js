@@ -165,9 +165,14 @@ function Perguntas() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+    <div
+				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+				bg-contain md:bg-cover md:bg-fixed"
+				style={{ backgroundImage: `url(${backgroundImage1})` }}
+			>
+    
       <header className="text-center mb-10">
-        <h1 className="text-5xl font-bold text-purple-600">Submissão de Formulário</h1>
+        <h1 className="text-5xl font-bold text-white">Submissão de Formulário</h1>
       </header>
       <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg ">
         <p className="text-gray-700 mb-6 text-ellipsis">
@@ -282,6 +287,7 @@ function Perguntas() {
        <footer className="mt-10 text-center text-gray-500">
         <p>&copy; {new Date().getFullYear()} A.fago. Todos os direitos reservados.</p>
       </footer>
+    
     </div>
   );
 }
@@ -290,9 +296,14 @@ export {Perguntas};
 
 function Forms() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+    
+      <div
+				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+				bg-contain md:bg-cover md:bg-fixed"
+				style={{ backgroundImage: `url(${backgroundImage2})` }}
+			>
       <header className="text-center mb-10">
-        <h1 className="text-5xl font-bold text-purple-600">Formulários</h1>
+        <h1 className="text-5xl font-bold text-white">Formulários</h1>
       </header>
       <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
         <p className="text-gray-700 mb-6">
@@ -331,9 +342,14 @@ function Ver_forms(){
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6 font-sans">
+      <div
+				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+				bg-contain md:bg-cover md:bg-fixed"
+				style={{ backgroundImage: `url(${backgroundImage1})` }}
+			>
+    
       <header className="text-center my-10">
-        <h1 className="text-4xl font-bold text-purple-600">Formulários Submetidos</h1>
+        <h1 className="text-4xl font-bold text-white">Formulários Submetidos</h1>
       </header>
 
       <main className="w-full max-w-4xl space-y-6">
