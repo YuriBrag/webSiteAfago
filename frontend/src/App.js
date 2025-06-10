@@ -8,6 +8,7 @@ import backgroundImage2 from "./assets/background_lp_2.jpg";
 import EntrarPage from './pages/EntrarPage.js';
 import ProfilePage from './pages/ProfilePage.js';
 import ProtectedRoute from './components/ProtectedRoute.js';
+import ContactsPage from './pages/ContactsPage.js';
 
 function LandingPage() {
 	const [message, setMessage] = useState("");
@@ -397,6 +398,14 @@ function App() {
         <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
         <Route path="/listar-formularios" element={<Ver_forms />} />
+        <Route path="/entrar" element={<EntrarPage />} />
+
+        {/*Rotas Protegidas*/}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/relatorios" element={<RelatoriosPage />} />
+          {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
+        </Route>
       </Routes>
     </Router>
   );
