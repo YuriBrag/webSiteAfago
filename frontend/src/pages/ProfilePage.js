@@ -178,12 +178,15 @@ function ProfilePage() {
     };
     
     return (
+        // 1. Este container agora cuida apenas do background.
         <div
-            className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-fixed relative flex flex-col items-start p-4 md:p-8 pt-48" // <-- ALTERADO PARA pt-48
+            className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-fixed relative"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
         >
             <div className="absolute inset-0 bg-black opacity-60 z-0"></div>
-            <div className="relative z-10 w-full max-w-7xl mx-auto">
+
+            {/* 2. Este container agora controla o layout e o espaçamento do conteúdo */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto p-4 md:p-8 pt-24 md:pt-32">
                 {error && <p className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</p>}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
