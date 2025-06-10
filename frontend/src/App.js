@@ -76,6 +76,14 @@ function LandingPage() {
 					/>
 				</div>
 
+				<main className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full md:w-3/5 text-center md:text-left">
+					<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">
+						Sobre
+					</h2>
+					<p className="text-gray-600 mb-4 text-sm sm:text-base min-h-[80px] sm:min-h-[100px]">
+						Somos uma empresa de soluções agrícolas para .... (Conteúdo mais
+						longo aqui ficaria melhor para testar a altura)
+					</p>
         
          {errorInfo ? (
           <p className="text-lg font-medium text-red-500 bg-red-100 p-3 rounded-md">{errorInfo}</p>
@@ -284,7 +292,7 @@ function Forms() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
       <header className="text-center mb-10">
-        <h1 className="text-5xl font-bold text-purple-600">Esta é Outra Página</h1>
+        <h1 className="text-5xl font-bold text-purple-600">Formulários</h1>
       </header>
       <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
         <p className="text-gray-700 mb-6">
@@ -296,6 +304,14 @@ function Forms() {
         >
           Responder formulário
         </Link>
+        <br />
+        <br />
+        <Link
+          to="/listar-formularios"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out inline-block"
+        >
+          Ver o histórico de formulários
+        </Link>
       </main>
        <footer className="mt-10 text-center text-gray-500">
         <p>&copy; {new Date().getFullYear()} A.fago. Todos os direitos reservados.</p>
@@ -303,6 +319,49 @@ function Forms() {
     </div>
   );
 }
+
+function Ver_forms(){
+  const [formularios, setFormularios] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/listar-formularios')
+      .then(res => res.json())
+      .then(data => setFormularios(data))
+      .catch(err => console.error('Erro ao buscar formulários:', err));
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6 font-sans">
+      <header className="text-center my-10">
+        <h1 className="text-4xl font-bold text-purple-600">Formulários Submetidos</h1>
+      </header>
+
+      <main className="w-full max-w-4xl space-y-6">
+        {formularios.length === 0 ? (
+          <p className="text-gray-500 text-center text-lg">Nenhum formulário encontrado.</p>
+        ) : (
+          formularios.map((form, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-xl p-6 transition duration-300 hover:shadow-lg"
+            >
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                {form.nome}
+              </h2>
+              <pre className="text-sm text-gray-700 whitespace-pre-wrap">{form.conteudo}</pre>
+            </div>
+          ))
+        )}
+      </main>
+
+      <footer className="mt-12 text-center text-gray-500">
+        <p>&copy; {new Date().getFullYear()} A.fago. Todos os direitos reservados.</p>
+      </footer>
+    </div>
+  );
+}
+
+export {Ver_forms}
 
 function OutraPagina() {
   return (
@@ -337,6 +396,7 @@ function App() {
         <Route path="/formularios" element={<Forms />} />
         <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
+        <Route path="/listar-formularios" element={<Ver_forms />} />
       </Routes>
     </Router>
   );

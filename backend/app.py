@@ -66,6 +66,26 @@ def salvar_respostas():
 
     return jsonify({"message": "Respostas salvas com sucesso!"})
 
+@app.route('/listar-formularios', methods=['GET'])
+def listar_formularios():
+    pasta_respostas = "respostas_formularios"
+    formularios = []
+
+    if not os.path.exists(pasta_respostas):
+        return jsonify([])
+
+    for nome_arquivo in sorted(os.listdir(pasta_respostas), reverse=True):
+        caminho = os.path.join(pasta_respostas, nome_arquivo)
+        if os.path.isfile(caminho) and nome_arquivo.endswith(".txt"):
+            with open(caminho, 'r', encoding='utf-8') as f:
+                conteudo = f.read()
+                formularios.append({
+                    "nome": nome_arquivo,
+                    "conteudo": conteudo
+                })
+
+    return jsonify(formularios)
+
 # Rotas para servir o frontend React (mantidas como estão)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
