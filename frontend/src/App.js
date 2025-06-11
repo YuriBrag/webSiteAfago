@@ -4,11 +4,12 @@ import Navbar from "./components/navbar.jsx";
 import icone from "./assets/icone.png";
 import backgroundImage1 from "./assets/background_lp.jpg";
 import backgroundImage2 from "./assets/background_lp_2.jpg";
-
 import EntrarPage from './pages/EntrarPage.js';
 import ProfilePage from './pages/ProfilePage.js';
 import ProtectedRoute from './components/ProtectedRoute.js';
 import ContactsPage from './pages/ContactsPage.js';
+import RegisterPage from "./pages/RegisterPage.js";
+
 
 function LandingPage() {
 	const [message, setMessage] = useState("");
@@ -155,7 +156,7 @@ function Perguntas() {
       satisfacao,
     };
 
-    const response = await fetch('http://localhost:5000/resp-formulario', {
+    const response = await fetch('http://localhost:5001/resp-formulario', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -397,13 +398,15 @@ function App() {
         <Route path="/formularios" element={<Forms />} />
         <Route path="/responder-formulario" element={<Perguntas />} />
         <Route path="/outra-pagina" element={<OutraPagina />} />
-        <Route path="/listar-formularios" element={<Ver_forms />} />
         <Route path="/entrar" element={<EntrarPage />} />
-
+        <Route path="/registrar" element={<RegisterPage />} />
+        <Route path="/listar-formularios" element={<Ver_forms />} />
+        <Route path="/contatos" element={<ContactsPage />} />
         {/*Rotas Protegidas*/}
+
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<ProfilePage />} />
-          <Route path="/relatorios" element={<RelatoriosPage />} />
+          {/*<Route path="/relatorios" element={<RelatoriosPage />} />*/}
           {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
         </Route>
       </Routes>
@@ -412,4 +415,3 @@ function App() {
 }
 
 export default App;
-
