@@ -81,7 +81,7 @@ function Navbar() {
 							Formularios
 						</Link>
 						<Link
-							to="/contato"
+							to="/contatos"
 							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
@@ -89,7 +89,7 @@ function Navbar() {
 							}`}
 							onClick={() => setIsOpen(false)}
 						>
-							Contato
+							Contatos
 						</Link>
             <Link
 							to="/entrar"
@@ -193,11 +193,11 @@ function Navbar() {
 						Formularios
 					</Link>
 					<Link
-						to="/contato"
+						to="/contatos"
 						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>
-						Contato
+						Contatos
 					</Link>
           <Link
 						to="/entrar"

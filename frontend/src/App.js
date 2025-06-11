@@ -7,7 +7,9 @@ import backgroundImage2 from "./assets/background_lp_2.jpg";
 import EntrarPage from './pages/EntrarPage.js';
 import ProfilePage from './pages/ProfilePage.js';
 import ProtectedRoute from './components/ProtectedRoute.js';
+import ContactsPage from './pages/ContactsPage.js';
 import RegisterPage from "./pages/RegisterPage.js";
+
 
 function LandingPage() {
 	const [message, setMessage] = useState("");
@@ -399,6 +401,7 @@ function App() {
         <Route path="/entrar" element={<EntrarPage />} />
         <Route path="/registrar" element={<RegisterPage />} />
         <Route path="/listar-formularios" element={<Ver_forms />} />
+        <Route path="/contatos" element={<ContactsPage />} />
         {/*Rotas Protegidas*/}
 
         <Route element={<ProtectedRoute />}>
@@ -406,8 +409,6 @@ function App() {
           {/*<Route path="/relatorios" element={<RelatoriosPage />} />*/}
           {/*<Route path="/configuracoes" element={<ConfiguracoesPage />} />*/}
         </Route>
-
-
       </Routes>
     </Router>
   );
