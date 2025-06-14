@@ -37,10 +37,9 @@ function EntrarPage() {
         return;
       }
       
-      // A CORREÇÃO ESTÁ AQUI: Garantir que todos os dados necessários são salvos.
       if (responseData.token && responseData.userEmail) {
           localStorage.setItem('authToken', responseData.token);
-          localStorage.setItem('userEmail', responseData.userEmail); // <-- PONTO CRÍTICO
+          localStorage.setItem('userEmail', responseData.userEmail); 
           if (responseData.userName) {
               localStorage.setItem('userName', responseData.userName);
           }

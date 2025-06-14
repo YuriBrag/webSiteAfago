@@ -7,9 +7,15 @@ import datetime
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
 
-# Path to the directory where user data will be stored
 USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
 LOGINS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logins.txt")
+
+PASTA_RESPOSTAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "respostas_formularios")
+
+@app.route('/api/hello', methods=['GET'])
+def hello():
+    """Endpoint de teste para verificar a conexão com o frontend."""
+    return jsonify({"message": "Olá! O frontend está conectado com o backend Flask!"})
 
 
 def sanitize_email_for_filename(email):
@@ -44,7 +50,6 @@ def login():
         return jsonify({"message": "Usuário não encontrado."}), 404
     
     if credentials.get(email) == password:
-        # Adicionado 'email' na resposta para o frontend saber quem está logado
         return jsonify({
             "message": "Login bem-sucedido!",
             "token": "dummy-test-token-12345",
@@ -74,9 +79,6 @@ def register():
     except Exception as e:
         return jsonify({"message": f"Erro ao salvar dados: {str(e)}"}), 500
 
-# ===========================================================
-# NOVAS ROTAS PARA GERENCIAR PROPRIEDADES E ÁREAS
-# ===========================================================
 
 @app.route('/api/profile-data', methods=['GET'])
 def get_profile_data():
@@ -91,25 +93,21 @@ def get_profile_data():
     properties = []
     areas = []
 
-    # Lê propriedades
     try:
         prop_file_path = os.path.join(user_dir, 'properties.txt')
         if os.path.exists(prop_file_path):
             with open(prop_file_path, 'r') as f:
                 properties = [line.strip() for line in f.readlines()]
     except IOError:
-        pass # O arquivo pode não existir ainda
+        pass
 
-
-    # Lê áreas
     try:
         areas_file_path = os.path.join(user_dir, 'areas.txt')
         if os.path.exists(areas_file_path):
             with open(areas_file_path, 'r') as f:
-                # Formato esperado "propriedade:area"
                 areas = [line.strip() for line in f.readlines()]
     except IOError:
-        pass # O arquivo pode não existir ainda
+        pass
 
     return jsonify({"properties": properties, "areas": areas})
 
@@ -125,7 +123,7 @@ def add_property():
 
     sanitized_email = sanitize_email_for_filename(user_email)
     user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
-    os.makedirs(user_dir, exist_ok=True) # Cria o diretório do usuário se não existir
+    os.makedirs(user_dir, exist_ok=True)
 
     prop_file_path = os.path.join(user_dir, 'properties.txt')
     with open(prop_file_path, 'a') as f:
@@ -149,26 +147,21 @@ def add_area():
     os.makedirs(user_dir, exist_ok=True)
 
     areas_file_path = os.path.join(user_dir, 'areas.txt')
-    # Salva no formato "propriedade:area" para fácil filtragem
     with open(areas_file_path, 'a') as f:
         f.write(f"{property_name}:{area_name}\n")
     
     return jsonify({"message": "Área adicionada com sucesso!"}), 201
 
 
-# Rotas estáticas
-
 @app.route('/resp-formulario', methods=['POST'])
 def salvar_respostas():
     data = request.json
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H%M%S")
     filename = f"resposta_{timestamp}.txt"
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp_display = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    pasta_respostas = "respostas_formularios"
-    os.makedirs(pasta_respostas, exist_ok=True)
-
-    caminho_arquivo = os.path.join(pasta_respostas, filename)
+    os.makedirs(PASTA_RESPOSTAS_DIR, exist_ok=True)
+    caminho_arquivo = os.path.join(PASTA_RESPOSTAS_DIR, filename)
 
     with open(caminho_arquivo, 'w', encoding='utf-8') as f:
         f.write("Horário: " + timestamp + "\n")
@@ -182,12 +175,11 @@ def salvar_respostas():
 
 @app.route('/listar-formularios', methods=['GET'])
 def listar_formularios():
-    pasta_respostas = "respostas_formularios"
+    pasta_respostas = PASTA_RESPOSTAS_DIR
     formularios = []
 
     if not os.path.exists(pasta_respostas):
         return jsonify([])
-
     for nome_arquivo in sorted(os.listdir(pasta_respostas), reverse=True):
         caminho = os.path.join(pasta_respostas, nome_arquivo)
         if os.path.isfile(caminho) and nome_arquivo.endswith(".txt"):
@@ -200,8 +192,6 @@ def listar_formularios():
 
     return jsonify(formularios)
 
-# Rotas para servir o frontend React (mantidas como estão)
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
@@ -211,5 +201,6 @@ def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    os.makedirs(USER_DATA_DIR, exist_ok=True) # Garante que a pasta principal de dados exista
+    os.makedirs(USER_DATA_DIR, exist_ok=True) 
+    os.makedirs(PASTA_RESPOSTAS_DIR, exist_ok=True)
     app.run(debug=True, port=5001)

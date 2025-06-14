@@ -14,7 +14,8 @@ function ContactsPage() {
         padding: '2rem'
       }}
     >
-      <div className="contact-card" style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1rem' }}>
+      <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+      <div className="relative contact-card" style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1rem' }}>
       <img src={iconLogo} alt="A.FAGO Logo" style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '200px', marginBottom: '1rem' }} />
         <p>Email: <a href="mailto:afagosolucoesbiotecnologicas@gmail.com">afagosolucoesbiotecnologicas@gmail.com</a></p>
         <p>WhatsApp: <a href="https://wa.me/5531986867740" target="_blank" rel="noopener noreferrer">(31) 9868-67740</a></p>

@@ -59,7 +59,7 @@ function Navbar() {
 							A.Fago
 						</Link>
 						<Link
-							to="/servicos"
+							to="/outra-pagina"
 							className={`text-base lg:text-lg transition-colors duration-300 px-3 py-2 rounded-md hover:text-[#91d132] ${
 								isScrolled
 									? "text-gray-800"
@@ -179,7 +179,7 @@ function Navbar() {
 						A.Fago
 					</Link>
 					<Link
-						to="/servicos"
+						to="/outra-pagina"
 						className="text-white hover:bg-[#91d132] block px-3 py-2 rounded-md text-base transition-colors duration-300"
 						onClick={() => setIsOpen(false)}
 					>

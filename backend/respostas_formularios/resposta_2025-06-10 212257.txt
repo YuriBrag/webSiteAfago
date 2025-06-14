@@ -1,0 +1,6 @@
+Horário: 2025-06-10 21:22:57
+Efetividade: 3
+Estado da Planta: Sintomática
+Houve Pragas: Sim
+Descrição das Pragas: toadas
+Satisfação: 2
