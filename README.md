@@ -13,4 +13,7 @@ Em Frontend execute:
 npm install
 npm start
 
+pip install pytest
+pip install pytest-mock
+
 Criado por: Yuri Bragine, Ana Clara Guerra, Pedro Lucas, Vinicius Zopelar, Antonio Gabriel Gomes.
