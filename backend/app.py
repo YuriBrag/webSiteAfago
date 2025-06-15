@@ -5,57 +5,15 @@ import os
 import re 
 import datetime
 
+
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
-CORS(app)
+
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
 LOGINS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logins.txt")
 
 PASTA_RESPOSTAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "respostas_formularios")
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(" ")[1]
-        if not token or token != "dummy-test-token-12345":
-            return jsonify({'message': 'Token inválido ou ausente!'}), 401
-        return f(*args, **kwargs)
-    return decorated
-
-def admin_required(f):
-    """Decorator que verifica se o usuário é um administrador."""
-    @wraps(f)
-    @token_required # Primeiro, verifica o token
-    def decorated(*args, **kwargs):
-        user_email = None
-        # Para requisições GET, os parâmetros vêm na URL (request.args)
-        if request.method == 'GET':
-            user_email = request.args.get('userEmail')
-        # Para outras requisições (POST, etc.), vêm no corpo JSON
-        else:
-            if request.is_json:
-                user_email = request.get_json().get('userEmail')
-
-        if not user_email:
-            return jsonify({'message': 'Email do usuário administrador não fornecido.'}), 400
-            
-        credentials = read_user_credentials()
-        user_data = credentials.get(user_email)
-        
-        if not user_data or user_data.get('role') != 'admin':
-            return jsonify({'message': 'Acesso negado: Requer privilégios de administrador.'}), 403
-        
-        # Opcional: Armazena o email para uso futuro na rota, se necessário
-        g.user_email = user_email
-        return f(*args, **kwargs)
-    return decorated
-
-@app.route('/api/hello', methods=['GET'])
-def hello():
-    """Endpoint de teste para verificar a conexão com o frontend."""
-    return jsonify({"message": "Olá! O frontend está conectado com o backend Flask!"})
 
 
 def sanitize_email_for_filename(email):
@@ -77,34 +35,115 @@ def read_user_credentials():
                     credentials[email] = {'password': password, 'role': role}
     return credentials
 
+def token_required(f):
+    """Verifica o token e extrai os dados do usuário da requisição."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]
+        
+        if not token or token != "dummy-test-token-12345":
+            return jsonify({'message': 'Token inválido ou ausente!'}), 401
+        
+        # Extrai o email do corpo (POST) ou da URL (GET)
+        user_email = None
+        if request.method == 'GET':
+            user_email = request.args.get('userEmail')
+        elif request.is_json:
+            user_email = request.get_json().get('userEmail')
+
+        if not user_email:
+            return jsonify({'message': 'Email do usuário não fornecido na requisição.'}), 400
+        
+        # Armazena os dados no objeto 'g' para uso na rota
+        g.user_email = user_email
+        return f(*args, **kwargs)
+    return decorated
+
+def admin_required(f):
+    """Verifica se o usuário tem permissões de administrador."""
+    @wraps(f)
+    @token_required # Reutiliza a lógica do token_required
+    def decorated(*args, **kwargs):
+        credentials = read_user_credentials()
+        user_data = credentials.get(g.user_email)
+        
+        if not user_data or user_data.get('role') != 'admin':
+            return jsonify({'message': 'Acesso negado: Requer privilégios de administrador.'}), 403
+        
+        return f(*args, **kwargs)
+    return decorated
+
+
+def get_user_name_by_email(email):
+    """Busca o nome completo de um usuário a partir do seu e-mail."""
+    try:
+        sanitized_email = sanitize_email_for_filename(email)
+        profile_path = os.path.join(USER_DATA_DIR, sanitized_email, 'profile.txt')
+        if os.path.exists(profile_path):
+            with open(profile_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    # Procura pela linha que começa com "Nome:"
+                    if line.strip().startswith("Nome:"):
+                        # Retorna o valor após "Nome: ", removendo espaços extras
+                        return line.strip()[6:].strip()
+    except Exception as e:
+        app.logger.error(f"Erro ao buscar nome para o email {email}: {e}")
+        return "Usuário Desconhecido"
+    # Retorna um valor padrão se o arquivo ou a linha não forem encontrados
+    return "Nome não encontrado"
+
+@app.route('/api/hello', methods=['GET'])
+def hello():
+    """Endpoint de teste para verificar a conexão com o frontend."""
+    return jsonify({"message": "Olá! O frontend está conectado com o backend Flask!"})
+
+
+
 @app.route('/api/admin/forms', methods=['GET'])
-@admin_required # Protegendo a rota
+@admin_required # A proteção continua a mesma
 def get_all_forms():
-    """Retorna uma lista de todos os formulários submetidos."""
+    """Retorna uma lista de todos os formulários submetidos, agora incluindo o nome do usuário."""
     formularios = []
     if not os.path.exists(PASTA_RESPOSTAS_DIR):
         return jsonify([])
+
     for nome_arquivo in sorted(os.listdir(PASTA_RESPOSTAS_DIR), reverse=True):
         caminho = os.path.join(PASTA_RESPOSTAS_DIR, nome_arquivo)
         if os.path.isfile(caminho) and nome_arquivo.endswith(".txt"):
             try:
                 with open(caminho, 'r', encoding='utf-8') as f:
-                    conteudo = f.read()
+                    lines = f.readlines()
+                    conteudo = "".join(lines)
+                    
+                    user_email = "não identificado"
+                    user_name = "Usuário Desconhecido"
+
+                    # Extrai o email do conteúdo do arquivo
+                    for line in lines:
+                        if line.strip().startswith("Usuário:"):
+                            user_email = line.strip()[8:].strip()
+                            # Usa o email extraído para buscar o nome completo
+                            user_name = get_user_name_by_email(user_email)
+                            break
+                    
                     formularios.append({
                         "nome": nome_arquivo,
-                        "conteudo": conteudo
+                        "conteudo": conteudo,
+                        "userName": user_name,  # Adiciona o nome do usuário
+                        "userEmail": user_email # Adiciona o email para contexto
                     })
-            except Exception:
-                continue # Ignora arquivos que não puderem ser lidos
+            except Exception as e:
+                app.logger.error(f"Erro ao processar o arquivo de formulário {nome_arquivo}: {e}")
+                continue
+                
     return jsonify(formularios)
 
-
 @app.route('/api/admin/users', methods=['GET'])
-@admin_required # Protegendo a rota
+@admin_required
 def get_all_users():
-    """Retorna uma lista de todos os usuários cadastrados."""
     credentials = read_user_credentials()
-    # Remove as senhas antes de enviar para o frontend
     users_list = [{'email': email, 'role': data['role']} for email, data in credentials.items()]
     return jsonify(users_list)
 
@@ -134,22 +173,45 @@ def login():
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
+    
+    # 1. Obter todos os novos campos da requisição
     email = data.get('email')
     password = data.get('password')
-    if not email or not password:
-        return jsonify({"message": "Email e senha são obrigatórios"}), 400
+    nome_completo = data.get('nomeCompleto')
+    cpf_cnpj = data.get('cpfCnpj')
+    telefone = data.get('telefone')
+
+    # Validação básica
+    if not all([email, password, nome_completo, cpf_cnpj, telefone]):
+        return jsonify({"message": "Todos os campos são obrigatórios"}), 400
     
     credentials = read_user_credentials()
     if email in credentials:
         return jsonify({"message": "Este email já está cadastrado."}), 409
     
     try:
-        log_entry = f"{email}:{password}\n"
+        # 2. Salvar login e senha com papel 'user' no logins.txt
+        log_entry = f"{email}:{password}:user\n"
         with open(LOGINS_FILE_PATH, "a") as f:
             f.write(log_entry)
+        
+        # 3. Salvar os dados adicionais em um arquivo de perfil separado
+        sanitized_email = sanitize_email_for_filename(email)
+        user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
+        os.makedirs(user_dir, exist_ok=True) # Cria o diretório do usuário se não existir
+
+        profile_file_path = os.path.join(user_dir, 'profile.txt')
+        with open(profile_file_path, 'w', encoding='utf-8') as f:
+            f.write(f"Nome: {nome_completo}\n")
+            f.write(f"CPF/CNPJ: {cpf_cnpj}\n")
+            f.write(f"Telefone: {telefone}\n")
+
         return jsonify({"message": "Usuário cadastrado com sucesso! Faça o login agora."}), 201
+        
     except Exception as e:
-        return jsonify({"message": f"Erro ao salvar dados: {str(e)}"}), 500
+        # Em caso de erro, é uma boa prática logar o erro no servidor
+        app.logger.error(f"Erro ao registrar usuário: {str(e)}")
+        return jsonify({"message": f"Erro interno ao salvar dados."}), 500
 
 
 @app.route('/api/profile-data', methods=['GET'])
@@ -225,28 +287,31 @@ def add_area():
     return jsonify({"message": "Área adicionada com sucesso!"}), 201
 
 
-@app.route('/resp-formulario', methods=['POST'])
-@token_required
+@app.route('/api/resp-formulario', methods=['POST'])
+@token_required # Agora este decorator já fornece g.user_email
 def salvar_respostas():
     data = request.json
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H%M%S")
-    filename = f"resposta_{timestamp}.txt"
+    user_email = g.user_email # Pega o email validado pelo decorator
+    
+    sanitized_email = sanitize_email_for_filename(user_email)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    filename = f"resposta_{sanitized_email}_{timestamp}.txt"
     timestamp_display = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    os.makedirs(PASTA_RESPOSTAS_DIR, exist_ok=True)
     caminho_arquivo = os.path.join(PASTA_RESPOSTAS_DIR, filename)
 
     with open(caminho_arquivo, 'w', encoding='utf-8') as f:
-        f.write("Horário: " + timestamp + "\n")
-        f.write("Efetividade: " + str(data.get('efetividade', '')) + "\n")
-        f.write("Estado da Planta: " + data.get('saude', '') + "\n")
-        f.write("Houve Pragas: " + data.get('houvePragas', '') + "\n")
-        f.write("Descrição das Pragas: " + data.get('resposta', '') + "\n")
-        f.write("Satisfação: " + str(data.get('satisfacao', '')) + "\n")
+        f.write(f"Usuário: {user_email}\n")
+        f.write(f"Horário: {timestamp_display}\n")
+        f.write(f"Efetividade: {str(data.get('efetividade', ''))}\n")
+        f.write(f"Estado da Planta: {data.get('saude', '')}\n")
+        f.write(f"Houve Pragas: {data.get('houvePragas', '')}\n")
+        f.write(f"Descrição das Pragas: {data.get('resposta', '')}\n")
+        f.write(f"Satisfação: {str(data.get('satisfacao', ''))}\n")
 
     return jsonify({"message": "Respostas salvas com sucesso!"})
 
-@app.route('/listar-formularios', methods=['GET'])
+@app.route('/api/listar-formularios', methods=['GET'])
 def listar_formularios():
     pasta_respostas = PASTA_RESPOSTAS_DIR
     formularios = []

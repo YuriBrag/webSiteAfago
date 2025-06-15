@@ -13,11 +13,11 @@ function ResponderFormularioPage() {
         
         const token = localStorage.getItem('authToken');
         const userEmail = localStorage.getItem('userEmail');
+
         if (!token || !userEmail) {
-            alert("Sessão inválida. Por favor, faça login novamente.");
+            alert("Sessão inválida. Faça login novamente.");
             return;
         }
-
         const payload = { 
             efetividade, 
             saude, 
@@ -27,18 +27,30 @@ function ResponderFormularioPage() {
             userEmail 
         };
 
-        const response = await fetch('http://localhost:5001/resp-formulario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            },
-            body: JSON.stringify(payload),
-        });
+        try {
+            // *** ROTA CORRIGIDA AQUI ***
+            const response = await fetch('http://localhost:5001/api/resp-formulario', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify(payload),
+            });
 
-        const data = await response.json();
-        alert(data.message);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Ocorreu um erro ao salvar o formulário.');
+            }
+
+            alert(data.message);
+        } catch (error) {
+            console.error("Erro ao submeter formulário:", error);
+            alert(`Erro: ${error.message}`);
+        }
     };
+
 
     return (
     <div

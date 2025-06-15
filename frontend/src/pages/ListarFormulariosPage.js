@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import backgroundImage1 from '../assets/background_lp.jpg'; // Ajuste o caminho se necessário
+import backgroundImage1 from '../assets/background_lp.jpg';
 
 function ListarFormulariosPage() {
     const [formularios, setFormularios] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5001/listar-formularios') // Porta corrigida
+        fetch('http://localhost:5001/api/listar-formularios') 
             .then(res => res.json())
             .then(data => setFormularios(data))
             .catch(err => console.error('Erro ao buscar formulários:', err));

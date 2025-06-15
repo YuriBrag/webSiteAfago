@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import backgroundImage1 from '../assets/background_lp.jpg';
 
-// Card para Gerenciar Usuários
 const UserManagementCard = ({ users }) => (
     <div className="bg-slate-100 p-6 rounded-lg shadow-md w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Gerenciar Usuários</h2>
@@ -20,18 +19,18 @@ const UserManagementCard = ({ users }) => (
         </ul>
     </div>
 );
-
-// Card para Visualizar Formulários
 const FormSubmissionsCard = ({ forms }) => (
      <div className="bg-slate-100 p-6 rounded-lg shadow-md w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Formulários Recebidos</h2>
-        <ul className="space-y-2 max-h-60 overflow-y-auto">
+        <ul className="space-y-3 max-h-60 overflow-y-auto pr-2">
             {forms.map((form) => (
-                <li key={form.nome} className="p-2 rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer">
-                    <p className="font-semibold text-sm truncate">{form.nome}</p>
+                <li key={form.nome} className="p-3 rounded-md bg-gray-50 hover:bg-blue-50 cursor-pointer border-l-4 border-transparent hover:border-blue-500 transition-all">
+                    <p className="font-bold text-gray-900">{form.userName || 'Usuário Desconhecido'}</p>
+                    <p className="text-sm text-gray-600">{form.userEmail}</p>
+                    <p className="text-xs text-gray-400 mt-1">{form.nome}</p>
                 </li>
             ))}
-            {forms.length === 0 && <li className="text-gray-500">Nenhum formulário encontrado.</li>}
+            {forms.length === 0 && <li className="text-gray-500 text-center py-4">Nenhum formulário encontrado.</li>}
         </ul>
     </div>
 );
@@ -45,7 +44,6 @@ function AdminPage() {
     const token = localStorage.getItem('authToken');
 
      const fetchAdminData = useCallback(async () => {
-        // Pega o token e o email do localStorage
         const token = localStorage.getItem('authToken');
         const userEmail = localStorage.getItem('userEmail');
 
@@ -60,7 +58,6 @@ function AdminPage() {
         };
         
         try {
-            // Adiciona o userEmail como um query parameter na URL
             const usersResponse = await fetch(`http://localhost:5001/api/admin/users?userEmail=${encodeURIComponent(userEmail)}`, { headers });
             if (!usersResponse.ok) {
                 const errData = await usersResponse.json();
@@ -69,7 +66,6 @@ function AdminPage() {
             const usersData = await usersResponse.json();
             setUsers(usersData || []);
 
-            // Faz o mesmo para a busca de formulários
             const formsResponse = await fetch(`http://localhost:5001/api/admin/forms?userEmail=${encodeURIComponent(userEmail)}`, { headers });
             if (!formsResponse.ok) {
                 const errData = await formsResponse.json();
@@ -99,7 +95,6 @@ function AdminPage() {
                 {error && <p className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</p>}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Coluna de ações rápidas */}
                     <div className="lg:col-span-1 space-y-6">
                          <div className="bg-slate-100 p-6 rounded-lg shadow-md w-full">
                             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Ações</h2>
@@ -113,8 +108,6 @@ function AdminPage() {
                             </div>
                          </div>
                     </div>
-
-                    {/* Coluna de dados */}
                     <div className="md:col-span-1 lg:col-span-2 space-y-6">
                         <UserManagementCard users={users} />
                         <FormSubmissionsCard forms={forms} />

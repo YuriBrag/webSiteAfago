@@ -1,0 +1,7 @@
+Usuário: zeca@prod.com
+Horário: 2025-06-15 01:41:58
+Efetividade: 5
+Estado da Planta: Sintomática
+Houve Pragas: Sim
+Descrição das Pragas: Ta paia
+Satisfação: 5

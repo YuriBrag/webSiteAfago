@@ -1,4 +1,6 @@
 plmbrandao@gmail.com:123:admin
 teste@teste.com:123:admin
-teste@email.com:teste:admin
+cad@cad:123:user
+form@form.com:123:user
 aaa@aaa.com:123:user
+zeca@prod.com:Zeca:user
