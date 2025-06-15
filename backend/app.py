@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory, request, g
 from flask_cors import CORS
 from functools import wraps
 import os
@@ -17,23 +17,38 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        # O frontend deve enviar o token no cabeçalho "Authorization"
         if 'Authorization' in request.headers:
-            # O formato esperado é "Bearer <token>"
             token = request.headers['Authorization'].split(" ")[1]
+        if not token or token != "dummy-test-token-12345":
+            return jsonify({'message': 'Token inválido ou ausente!'}), 401
+        return f(*args, **kwargs)
+    return decorated
 
-        if not token:
-            return jsonify({'message': 'Token de acesso ausente!'}), 401
+def admin_required(f):
+    """Decorator que verifica se o usuário é um administrador."""
+    @wraps(f)
+    @token_required # Primeiro, verifica o token
+    def decorated(*args, **kwargs):
+        user_email = None
+        # Para requisições GET, os parâmetros vêm na URL (request.args)
+        if request.method == 'GET':
+            user_email = request.args.get('userEmail')
+        # Para outras requisições (POST, etc.), vêm no corpo JSON
+        else:
+            if request.is_json:
+                user_email = request.get_json().get('userEmail')
 
-        # --- Validação do Token ---
-        # No seu protótipo, a validação é simples.
-        # Em um app real, você usaria uma biblioteca de JWT para verificar a assinatura.
-        if token != "dummy-test-token-12345":
-             return jsonify({'message': 'Token inválido ou expirado!'}), 401
-
-        # Você pode até extrair o email do token aqui se ele for um JWT
-        # Por enquanto, vamos apenas validar
-
+        if not user_email:
+            return jsonify({'message': 'Email do usuário administrador não fornecido.'}), 400
+            
+        credentials = read_user_credentials()
+        user_data = credentials.get(user_email)
+        
+        if not user_data or user_data.get('role') != 'admin':
+            return jsonify({'message': 'Acesso negado: Requer privilégios de administrador.'}), 403
+        
+        # Opcional: Armazena o email para uso futuro na rota, se necessário
+        g.user_email = user_email
         return f(*args, **kwargs)
     return decorated
 
@@ -48,22 +63,54 @@ def sanitize_email_for_filename(email):
     return re.sub(r'[^a-zA-Z0-9_.-]', '_', email)
 
 def read_user_credentials():
+    """Lê as credenciais do arquivo, agora incluindo o papel do usuário."""
     credentials = {}
     if not os.path.exists(LOGINS_FILE_PATH):
         return credentials
     with open(LOGINS_FILE_PATH, "r") as f:
         for line in f:
             line = line.strip()
-            if ":" in line:
-                try:
-                    email, password = line.split(':', 1)
-                    credentials[email] = password
-                except ValueError:
-                    continue
+            if line:
+                parts = line.split(':', 2)
+                if len(parts) == 3:
+                    email, password, role = parts
+                    credentials[email] = {'password': password, 'role': role}
     return credentials
+
+@app.route('/api/admin/forms', methods=['GET'])
+@admin_required # Protegendo a rota
+def get_all_forms():
+    """Retorna uma lista de todos os formulários submetidos."""
+    formularios = []
+    if not os.path.exists(PASTA_RESPOSTAS_DIR):
+        return jsonify([])
+    for nome_arquivo in sorted(os.listdir(PASTA_RESPOSTAS_DIR), reverse=True):
+        caminho = os.path.join(PASTA_RESPOSTAS_DIR, nome_arquivo)
+        if os.path.isfile(caminho) and nome_arquivo.endswith(".txt"):
+            try:
+                with open(caminho, 'r', encoding='utf-8') as f:
+                    conteudo = f.read()
+                    formularios.append({
+                        "nome": nome_arquivo,
+                        "conteudo": conteudo
+                    })
+            except Exception:
+                continue # Ignora arquivos que não puderem ser lidos
+    return jsonify(formularios)
+
+
+@app.route('/api/admin/users', methods=['GET'])
+@admin_required # Protegendo a rota
+def get_all_users():
+    """Retorna uma lista de todos os usuários cadastrados."""
+    credentials = read_user_credentials()
+    # Remove as senhas antes de enviar para o frontend
+    users_list = [{'email': email, 'role': data['role']} for email, data in credentials.items()]
+    return jsonify(users_list)
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    """Função de login atualizada para retornar o papel (role) do usuário."""
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
@@ -71,18 +118,18 @@ def login():
         return jsonify({"message": "Email e senha são obrigatórios"}), 400
     
     credentials = read_user_credentials()
-    if email not in credentials:
-        return jsonify({"message": "Usuário não encontrado."}), 404
-    
-    if credentials.get(email) == password:
+    user_data = credentials.get(email)
+
+    if user_data and user_data['password'] == password:
         return jsonify({
             "message": "Login bem-sucedido!",
-            "token": "dummy-test-token-12345",
+            "token": "dummy-test-token-12345", # Em produção, seria um JWT
             "userName": email.split('@')[0],
-            "userEmail": email 
+            "userEmail": email,
+            "userRole": user_data['role'] 
         }), 200
     else:
-        return jsonify({"message": "Senha incorreta."}), 401
+        return jsonify({"message": "Credenciais incorretas."}), 401
 
 @app.route('/api/register', methods=['POST'])
 def register():

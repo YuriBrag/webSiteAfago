@@ -8,6 +8,7 @@ function Navbar() {
     const navigate = useNavigate();
 
     const token = localStorage.getItem('authToken');
+    const userRole = localStorage.getItem('userRole');
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -16,6 +17,7 @@ function Navbar() {
         localStorage.removeItem('userRole'); 
     
         navigate('/entrar');
+        window.location.reload();
     };
 
     useEffect(() => {
@@ -62,6 +64,9 @@ function Navbar() {
                         {token ? (
                             <>
                                 <Link to="/perfil" className={navLinkClasses} onClick={() => setIsOpen(false)}>Perfil</Link>
+                                {userRole === 'admin' && (
+                                    <Link to="/admin" className={`${navLinkClasses} text-red-500 font-bold`}>Admin</Link>
+                                )}
                                 <button onClick={handleLogout} className={`${navLinkClasses} bg-red-500 text-white hover:bg-red-600 hover:text-white`}>
                                     Sair
                                 </button>
@@ -92,6 +97,9 @@ function Navbar() {
                             <Link to="/perfil" className={mobileNavLinkClasses} onClick={() => handleMobileClick()}>
                                 Perfil
                             </Link>
+                            {userRole === 'admin' && (
+                                <Link to="/admin" className={`${navLinkClasses} text-red-500 font-bold`}>Admin</Link>
+                            )}
                             <button onClick={() => handleMobileClick(handleLogout)} className={`${mobileNavLinkClasses} w-full text-left bg-red-500/50`}>
                                 Sair
                             </button>

@@ -19,6 +19,9 @@ import ResponderFormularioPage from './pages/ResponderFormulariosPage.js';
 import ListarFormulariosPage from './pages/ListarFormulariosPage.js';
 
 import OutraPagina from './pages/OutraPagina.js';
+
+import AdminProtectedRoute from './components/AdminProtectedRoute.js';
+import AdminPage from './pages/AdminPage.js'
  
 
 function App() {
@@ -40,6 +43,11 @@ function App() {
                     <Route path="/responder-formulario" element={<ResponderFormularioPage />} />
                     <Route path="/listar-formularios" element={<ListarFormulariosPage />} />
                     
+                </Route>
+                {/* Rota Protegida para Administradores */}
+                <Route element={<AdminProtectedRoute />}>
+                  <Route path="/admin" element={<AdminPage />} />
+                  {/* Adicione outras rotas de admin aqui, ex: /admin/editar-usuario/:id */}
                 </Route>
             </Routes>
         </Router>

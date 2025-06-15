@@ -1,4 +1,4 @@
-plmbrandao@gmail.com:123
-teste@teste.com:123
-teste@email.com:teste
-aaa@aaa.com:123
+plmbrandao@gmail.com:123:admin
+teste@teste.com:123:admin
+teste@email.com:teste:admin
+aaa@aaa.com:123:user
