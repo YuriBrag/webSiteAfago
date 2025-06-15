@@ -9,7 +9,8 @@ function OutraPagina() {
             </header>
             <main className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
                 <p className="text-gray-700 mb-6">
-                    ...
+                    No momento nao possuimos uma pagina de servicos, para saber mais entre em contato 
+                    em nosso Whatsapp: (31) 9868-67740
                 </p>
                 <Link
                     to="/"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import backgroundImage1 from '../assets/background_lp.jpg'; // Ajuste o caminho se necessário
+import backgroundImage1 from '../assets/background_lp.jpg'; 
 
 function ResponderFormularioPage() {
     const [efetividade, setEfetividade] = useState('');
@@ -10,12 +10,32 @@ function ResponderFormularioPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = { efetividade, saude, houvePragas, resposta: houvePragas === 'Sim' ? resposta : '', satisfacao };
+        
+        const token = localStorage.getItem('authToken');
+        const userEmail = localStorage.getItem('userEmail');
+        if (!token || !userEmail) {
+            alert("Sessão inválida. Por favor, faça login novamente.");
+            return;
+        }
+
+        const payload = { 
+            efetividade, 
+            saude, 
+            houvePragas, 
+            resposta: houvePragas === 'Sim' ? resposta : '', 
+            satisfacao,
+            userEmail 
+        };
+
         const response = await fetch('http://localhost:5001/resp-formulario', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
             body: JSON.stringify(payload),
         });
+
         const data = await response.json();
         alert(data.message);
     };

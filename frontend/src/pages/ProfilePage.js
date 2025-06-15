@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage1 from '../assets/background_lp.jpg';
 
-// Componente para o card do Perfil
 const ProfileCard = ({ userName, userEmail }) => (
     <div className="bg-slate-100 p-6 rounded-lg shadow-md w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Perfil</h2>
@@ -25,7 +24,6 @@ const ProfileCard = ({ userName, userEmail }) => (
     </div>
 );
 
-// Componente para o card de Propriedades
 const PropertiesCard = ({ properties, onAddProperty, onSelectProperty, selectedProperty }) => {
     const [newPropertyName, setNewPropertyName] = useState('');
     const handleSubmit = (e) => {
@@ -64,7 +62,6 @@ const PropertiesCard = ({ properties, onAddProperty, onSelectProperty, selectedP
     );
 };
 
-// Componente para o card de Áreas
 const AreasCard = ({ areas, selectedProperty, onAddArea }) => {
     const [newAreaName, setNewAreaName] = useState('');
     const handleSubmit = (e) => {
@@ -178,14 +175,11 @@ function ProfilePage() {
     };
     
     return (
-        // 1. Este container agora cuida apenas do background.
         <div
             className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-fixed relative"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
         >
             <div className="absolute inset-0 bg-black opacity-60 z-0"></div>
-
-            {/* 2. Este container agora controla o layout e o espaçamento do conteúdo */}
             <div className="relative z-10 w-full max-w-7xl mx-auto p-4 md:p-8 pt-24 md:pt-32">
                 {error && <p className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</p>}
                 
@@ -199,6 +193,9 @@ function ProfilePage() {
                        />
                        <Link to="/relatorios" className="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                            Ver Relatórios
+                       </Link>
+                       <Link to="/responder-formulario" className="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                           Responder Formulário
                        </Link>
                     </div>
 

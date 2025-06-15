@@ -19,6 +19,7 @@ import ResponderFormularioPage from './pages/ResponderFormulariosPage.js';
 import ListarFormulariosPage from './pages/ListarFormulariosPage.js';
 
 import OutraPagina from './pages/OutraPagina.js';
+ 
 
 function App() {
     return (
@@ -31,13 +32,14 @@ function App() {
                 <Route path="/registrar" element={<RegisterPage />} />
                 <Route path="/contatos" element={<ContactsPage />} />
                 <Route path="/outra-pagina" element={<OutraPagina />} />
-                <Route path="/formularios" element={<FormsPage />} />
-                <Route path="/responder-formulario" element={<ResponderFormularioPage />} />
-                <Route path="/listar-formularios" element={<ListarFormulariosPage />} />
+                {/* <Route path="/formularios" element={<FormsPage />} /> */}
 
                 {/* Rotas Protegidas */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/perfil" element={<ProfilePage />} />
+                    <Route path="/responder-formulario" element={<ResponderFormularioPage />} />
+                    <Route path="/listar-formularios" element={<ListarFormulariosPage />} />
+                    
                 </Route>
             </Routes>
         </Router>

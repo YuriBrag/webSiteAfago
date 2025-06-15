@@ -1,6 +1,0 @@
-Horário: 2025-06-14 162757
-Efetividade: 3
-Estado da Planta: Sintomática
-Houve Pragas: Sim
-Descrição das Pragas: Larva
-Satisfação: 5

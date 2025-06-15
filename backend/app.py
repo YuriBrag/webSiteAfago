@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
+from functools import wraps
 import os
 import re 
 import datetime
@@ -11,6 +12,30 @@ USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_d
 LOGINS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logins.txt")
 
 PASTA_RESPOSTAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "respostas_formularios")
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        # O frontend deve enviar o token no cabeçalho "Authorization"
+        if 'Authorization' in request.headers:
+            # O formato esperado é "Bearer <token>"
+            token = request.headers['Authorization'].split(" ")[1]
+
+        if not token:
+            return jsonify({'message': 'Token de acesso ausente!'}), 401
+
+        # --- Validação do Token ---
+        # No seu protótipo, a validação é simples.
+        # Em um app real, você usaria uma biblioteca de JWT para verificar a assinatura.
+        if token != "dummy-test-token-12345":
+             return jsonify({'message': 'Token inválido ou expirado!'}), 401
+
+        # Você pode até extrair o email do token aqui se ele for um JWT
+        # Por enquanto, vamos apenas validar
+
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
@@ -154,6 +179,7 @@ def add_area():
 
 
 @app.route('/resp-formulario', methods=['POST'])
+@token_required
 def salvar_respostas():
     data = request.json
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H%M%S")
