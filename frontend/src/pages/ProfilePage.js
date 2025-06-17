@@ -44,12 +44,21 @@ const PropertiesCard = ({
 	onSelectProperty,
 	selectedProperty,
 }) => {
-	const [newPropertyName, setNewPropertyName] = useState("");
+	const [form, setForm] = useState({
+		nome: "",
+		tamanho: "",
+		clima: "",
+		solo: "",
+		endereco: "",
+	});
+	const handleChange = (e) => {
+		setForm({ ...form, [e.target.name]: e.target.value });
+	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (newPropertyName.trim()) {
-			onAddProperty(newPropertyName);
-			setNewPropertyName("");
+		if (form.nome.trim() && form.tamanho) {
+			onAddProperty(form);
+			setForm({ nome: "", tamanho: "", clima: "", solo: "", endereco: "" });
 		}
 	};
 	return (
@@ -61,14 +70,14 @@ const PropertiesCard = ({
 				{properties.map((prop, index) => (
 					<li
 						key={index}
-						onClick={() => onSelectProperty(prop)}
+						onClick={() => onSelectProperty(prop.nome)}
 						className={`p-2 rounded-md cursor-pointer transition-colors ${
-							selectedProperty === prop
+							selectedProperty === prop.nome
 								? "bg-green-200 font-bold"
 								: "hover:bg-gray-200"
 						}`}
 					>
-						{prop}
+						{prop.nome}
 					</li>
 				))}
 				{properties.length === 0 && (
@@ -77,20 +86,55 @@ const PropertiesCard = ({
 			</ul>
 			<form
 				onSubmit={handleSubmit}
-				className="flex items-center gap-2 border-t pt-4"
+				className="flex flex-col gap-2 border-t pt-4"
 			>
 				<input
+					name="nome"
 					type="text"
-					value={newPropertyName}
-					onChange={(e) => setNewPropertyName(e.target.value)}
-					placeholder="Nome da nova propriedade"
-					className="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+					value={form.nome}
+					onChange={handleChange}
+					placeholder="Nome da propriedade"
+					className="p-2 border rounded-md"
+					required
+				/>
+				<input
+					name="tamanho"
+					type="number"
+					value={form.tamanho}
+					onChange={handleChange}
+					placeholder="Tamanho (ha)"
+					className="p-2 border rounded-md"
+					required
+				/>
+				<input
+					name="clima"
+					type="text"
+					value={form.clima}
+					onChange={handleChange}
+					placeholder="Clima"
+					className="p-2 border rounded-md"
+				/>
+				<input
+					name="solo"
+					type="text"
+					value={form.solo}
+					onChange={handleChange}
+					placeholder="Solo"
+					className="p-2 border rounded-md"
+				/>
+				<input
+					name="endereco"
+					type="text"
+					value={form.endereco}
+					onChange={handleChange}
+					placeholder="Endereço"
+					className="p-2 border rounded-md"
 				/>
 				<button
 					type="submit"
-					className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition-colors flex-shrink-0 w-10 h-10 flex items-center justify-center font-bold text-xl"
+					className="bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors font-bold"
 				>
-					+
+					Adicionar Propriedade
 				</button>
 			</form>
 		</div>
@@ -98,17 +142,25 @@ const PropertiesCard = ({
 };
 
 const AreasCard = ({ areas, selectedProperty, onAddArea }) => {
-	const [newAreaName, setNewAreaName] = useState("");
+	const [form, setForm] = useState({
+		tamanho: "",
+		tipo_aplicacao: "",
+		cultura: "",
+		tempo_tratamento: "",
+	});
+	const handleChange = (e) => {
+		setForm({ ...form, [e.target.name]: e.target.value });
+	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (newAreaName.trim()) {
-			onAddArea(newAreaName);
-			setNewAreaName("");
+		if (selectedProperty && form.tamanho) {
+			onAddArea({ ...form, propertyName: selectedProperty });
+			setForm({ tamanho: "", tipo_aplicacao: "", cultura: "", tempo_tratamento: "" });
 		}
 	};
-	const filteredAreas = areas
-		.filter((area) => area.startsWith(`${selectedProperty}:`))
-		.map((area) => area.split(":")[1]);
+	const filteredAreas = areas.filter(
+		(area) => area.propertyName === selectedProperty
+	);
 	return (
 		<div className="bg-slate-100 p-6 rounded-lg shadow-md w-full">
 			<h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
@@ -121,12 +173,13 @@ const AreasCard = ({ areas, selectedProperty, onAddArea }) => {
 			) : (
 				<>
 					<p className="font-semibold mb-2">
-						Áreas de: <span className="text-green-700">{selectedProperty}</span>
+						Áreas de:{" "}
+						<span className="text-green-700">{selectedProperty}</span>
 					</p>
 					<ul className="space-y-2 max-h-48 overflow-y-auto mb-4">
 						{filteredAreas.map((area, index) => (
 							<li key={index} className="p-2 rounded-md bg-gray-50">
-								{area}
+								{area.cultura} - {area.tamanho}ha
 							</li>
 						))}
 						{filteredAreas.length === 0 && (
@@ -137,20 +190,46 @@ const AreasCard = ({ areas, selectedProperty, onAddArea }) => {
 					</ul>
 					<form
 						onSubmit={handleSubmit}
-						className="flex items-center gap-2 border-t pt-4"
+						className="flex flex-col gap-2 border-t pt-4"
 					>
 						<input
+							name="tamanho"
+							type="number"
+							value={form.tamanho}
+							onChange={handleChange}
+							placeholder="Tamanho (ha)"
+							className="p-2 border rounded-md"
+							required
+						/>
+						<input
+							name="tipo_aplicacao"
 							type="text"
-							value={newAreaName}
-							onChange={(e) => setNewAreaName(e.target.value)}
-							placeholder="Nome da nova área"
-							className="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							value={form.tipo_aplicacao}
+							onChange={handleChange}
+							placeholder="Tipo de Aplicação"
+							className="p-2 border rounded-md"
+						/>
+						<input
+							name="cultura"
+							type="text"
+							value={form.cultura}
+							onChange={handleChange}
+							placeholder="Cultura"
+							className="p-2 border rounded-md"
+						/>
+						<input
+							name="tempo_tratamento"
+							type="text"
+							value={form.tempo_tratamento}
+							onChange={handleChange}
+							placeholder="Tempo de Tratamento"
+							className="p-2 border rounded-md"
 						/>
 						<button
 							type="submit"
-							className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors flex-shrink-0 w-10 h-10 flex items-center justify-center font-bold text-xl"
+							className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition-colors font-bold"
 						>
-							+
+							Adicionar Área
 						</button>
 					</form>
 				</>
@@ -196,21 +275,21 @@ function ProfilePage() {
 		}
 	}, [navigate, fetchData]);
 
-	const handleAddProperty = async (propertyName) => {
+	const handleAddProperty = async (propertyData) => {
 		try {
 			const response = await fetch("http://localhost:5001/api/properties", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email: userEmail, propertyName }),
+				body: JSON.stringify({ email: userEmail, ...propertyData }),
 			});
 			if (!response.ok) throw new Error("Falha ao adicionar propriedade.");
-			setProperties((prev) => [...prev, propertyName]);
+			setProperties((prev) => [...prev, propertyData]);
 		} catch (err) {
 			setError(err.message);
 		}
 	};
 
-	const handleAddArea = async (areaName) => {
+	const handleAddArea = async (areaData) => {
 		if (!selectedProperty) {
 			setError("Por favor, selecione uma propriedade primeiro.");
 			return;
@@ -219,14 +298,10 @@ function ProfilePage() {
 			const response = await fetch("http://localhost:5001/api/areas", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					email: userEmail,
-					propertyName: selectedProperty,
-					areaName,
-				}),
+				body: JSON.stringify({ email: userEmail, ...areaData }),
 			});
 			if (!response.ok) throw new Error("Falha ao adicionar área.");
-			setAreas((prev) => [...prev, `${selectedProperty}:${areaName}`]);
+			setAreas((prev) => [...prev, { ...areaData, propertyName: selectedProperty }]);
 		} catch (err) {
 			setError(err.message);
 		}

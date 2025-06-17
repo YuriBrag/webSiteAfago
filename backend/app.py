@@ -6,6 +6,8 @@ import re
 import datetime
 
 from models.usuario import Usuario
+from models.propriedade import Propriedade
+from models.area import Area
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -250,18 +252,30 @@ def add_property():
     """Adiciona uma nova propriedade para um usuário."""
     data = request.get_json()
     user_email = data.get('email')
-    property_name = data.get('propertyName')
+    nome = data.get('nome')
+    tamanho = data.get('tamanho')
+    clima = data.get('clima')
+    solo = data.get('solo')
+    endereco = data.get('endereco')
 
-    if not user_email or not property_name:
-        return jsonify({"message": "Email e nome da propriedade são necessários"}), 400
+    # Validação básica
+    if not user_email or not nome or not tamanho:
+        return jsonify({"message": "Email, nome e tamanho da propriedade são necessários"}), 400
+
+    try:
+        tamanho_int = int(tamanho)
+        propriedade = Propriedade(nome, tamanho_int, clima, solo, endereco)
+    except Exception as e:
+        return jsonify({"message": f"Erro ao criar propriedade: {e}"}), 400
 
     sanitized_email = sanitize_email_for_filename(user_email)
     user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
     os.makedirs(user_dir, exist_ok=True)
 
     prop_file_path = os.path.join(user_dir, 'properties.txt')
+    # Salva todos os campos em uma linha separada por ;
     with open(prop_file_path, 'a') as f:
-        f.write(f"{property_name}\n")
+        f.write(f"{propriedade.get_nome()};{propriedade.get_tamanho()};{propriedade.get_clima()};{propriedade.get_solo()};{propriedade.get_endereco()}\n")
 
     return jsonify({"message": "Propriedade adicionada com sucesso!"}), 201
 
@@ -271,19 +285,30 @@ def add_area():
     data = request.get_json()
     user_email = data.get('email')
     property_name = data.get('propertyName')
-    area_name = data.get('areaName')
+    tamanho = data.get('tamanho')
+    tipo_aplicacao = data.get('tipo_aplicacao')
+    cultura = data.get('cultura')
+    tempo_treinamento = data.get('tempo_tratamento')
 
-    if not user_email or not property_name or not area_name:
-        return jsonify({"message": "Email, nome da propriedade e nome da área são necessários"}), 400
+    # Validação básica
+    if not user_email or not property_name or not tamanho:
+        return jsonify({"message": "Email, nome da propriedade e tamanho da área são necessários"}), 400
+
+    try:
+        tamanho_int = int(tamanho)
+        area = Area(tamanho_int, tipo_aplicacao, cultura, tempo_treinamento)
+    except Exception as e:
+        return jsonify({"message": f"Erro ao criar área: {e}"}), 400
 
     sanitized_email = sanitize_email_for_filename(user_email)
     user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
     os.makedirs(user_dir, exist_ok=True)
 
     areas_file_path = os.path.join(user_dir, 'areas.txt')
+    # Salva todos os campos em uma linha separada por ;
     with open(areas_file_path, 'a') as f:
-        f.write(f"{property_name}:{area_name}\n")
-    
+        f.write(f"{property_name};{area.getTamanho()};{area.getTipoAplicacao()};{area.getCultura()};{area.getTempoTreinamento()}\n")
+
     return jsonify({"message": "Área adicionada com sucesso!"}), 201
 
 
