@@ -22,17 +22,16 @@ def test_hello_endpoint(client):
 # Teste para o endpoint de registro (caso de sucesso)
 def test_register_success(client, mocker): # mocker é para simular (mockar)
     """Testa o registro de um novo usuário com sucesso."""
-    # Simula a escrita em arquivo para não criar arquivos reais durante o teste
     mocker.patch("builtins.open", mocker.mock_open())
-    # Simula que o usuário ainda não existe
     mocker.patch("app.read_user_credentials", return_value={})
 
     response = client.post('/api/register', json={
         "email": "existing@example.com",
-        "password": "password123",
-        "nomeCompleto": "Usuário Existente Teste",
-        "cpfCnpj": "000.111.222-33",
-        "telefone": "31777776666"
+        "senha": "password123",  # Corrigido para 'senha'
+        "nome": "Usuário",
+        "sobrenome": "Teste",
+        "lembrar_de_mim": False,
+        "nivel_de_acesso": "user"
     })
 
     assert response.status_code == 201 # 201 Created
@@ -42,15 +41,15 @@ def test_register_success(client, mocker): # mocker é para simular (mockar)
 # Teste para o endpoint de registro (usuário já existe)
 def test_register_user_exists(client, mocker):
     """Testa a tentativa de registro de um email que já existe."""
-    # Simula que o usuário já existe no "banco de dados"
-    mocker.patch("app.read_user_credentials", return_value={"existing@example.com": "pass"})
+    mocker.patch("app.read_user_credentials", return_value={"existing@example.com": {"password": "pass", "role": "user"}})
 
     response = client.post('/api/register', json={
         "email": "existing@example.com",
-        "password": "password123",
-        "nomeCompleto": "Usuário Existente Teste",
-        "cpfCnpj": "000.111.222-33",
-        "telefone": "31777776666"
+        "senha": "password123",  # Corrigido para 'senha'
+        "nome": "Usuário",
+        "sobrenome": "Teste",
+        "lembrar_de_mim": False,
+        "nivel_de_acesso": "user"
     })
 
     assert response.status_code == 409
