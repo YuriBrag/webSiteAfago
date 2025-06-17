@@ -1,43 +1,51 @@
-// src/pages/LandingPage.js
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import icone from "../assets/icone.png";
 import backgroundImage1 from "../assets/background_lp.jpg";
 import backgroundImage2 from "../assets/background_lp_2.jpg";
 
 function LandingPage() {
-    const [message, setMessage] = useState("");
-    const [errorInfo, setErrorInfo] = useState("");
+	const [message, setMessage] = useState("");
+	const [errorInfo, setErrorInfo] = useState("");
 
-    useEffect(() => {
-        document.title = "A.Fago";
-    }, []);
+	useEffect(() => {
+		document.title = "A.Fago";
+	}, []);
 
-    useEffect(() => {
-        fetch("/api/hello")
-            .then((response) => {
-                const contentType = response.headers.get("content-type");
-                if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
-                    return response.json();
-                }
-                return response.text().then((text) => {
-                    if (text.startsWith("<!DOCTYPE html>")) {
-                        throw new Error("Recebido HTML em vez de JSON. Verifique o proxy e se o servidor backend está rodando na porta correta e acessível em /api/hello.");
-                    }
-                    throw new Error(`Resposta inesperada do servidor: ${response.status} ${response.statusText}. Detalhes: ${text.substring(0, 100)}...`);
-                });
-            })
-            .then((data) => {
-                setMessage(data.message);
-                setErrorInfo("");
-            })
-            .catch((error) => {
-                setErrorInfo(`Erro ao carregar dados: ${error.message}`);
-                if (!message) setMessage("Falha ao conectar com o backend.");
-            });
-    }, []);
+	useEffect(() => {
+		fetch("/api/hello")
+			.then((response) => {
+				const contentType = response.headers.get("content-type");
+				if (
+					response.ok &&
+					contentType &&
+					contentType.indexOf("application/json") !== -1
+				) {
+					return response.json();
+				}
+				return response.text().then((text) => {
+					if (text.startsWith("<!DOCTYPE html>")) {
+						throw new Error(
+							"Recebido HTML em vez de JSON. Verifique o proxy e se o servidor backend está rodando na porta correta e acessível em /api/hello."
+						);
+					}
+					throw new Error(
+						`Resposta inesperada do servidor: ${response.status} ${
+							response.statusText
+						}. Detalhes: ${text.substring(0, 100)}...`
+					);
+				});
+			})
+			.then((data) => {
+				setMessage(data.message);
+				setErrorInfo("");
+			})
+			.catch((error) => {
+				setErrorInfo(`Erro ao carregar dados: ${error.message}`);
+				if (!message) setMessage("Falha ao conectar com o backend.");
+			});
+	}, []);
 
-    return (
+	return (
 		<div className="min-h-screen flex flex-col font-sans min-w-[360px]">
 			{/* Hero com efeito parallax desativado no mobile */}
 			<div
@@ -70,12 +78,16 @@ function LandingPage() {
 						Somos uma empresa de soluções agrícolas para .... (Conteúdo mais
 						longo aqui ficaria melhor para testar a altura)
 					</p>
-        
-         {errorInfo ? (
-          <p className="text-lg font-medium text-red-500 bg-red-100 p-3 rounded-md">{errorInfo}</p>
-        ) : (
-          <p className="text-lg font-medium text-indigo-600">{message || "Carregando mensagem do backend..."}</p>
-        )} 
+
+					{errorInfo ? (
+						<p className="text-lg font-medium text-red-500 bg-red-100 p-3 rounded-md">
+							{errorInfo}
+						</p>
+					) : (
+						<p className="text-lg font-medium text-indigo-600">
+							{message || "Carregando mensagem do backend..."}
+						</p>
+					)}
 				</main>
 			</div>
 

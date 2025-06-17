@@ -5,6 +5,7 @@ import os
 import re 
 import datetime
 
+from models.usuario import Usuario
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -12,16 +13,12 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_
 
 USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
 LOGINS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logins.txt")
-
 PASTA_RESPOSTAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "respostas_formularios")
 
-
 def sanitize_email_for_filename(email):
-    """Sanitizes an email address to be used as a filename or directory name."""
     return re.sub(r'[^a-zA-Z0-9_.-]', '_', email)
 
 def read_user_credentials():
-    """Lê as credenciais do arquivo, agora incluindo o papel do usuário."""
     credentials = {}
     if not os.path.exists(LOGINS_FILE_PATH):
         return credentials
@@ -173,46 +170,49 @@ def login():
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
-    
-    # 1. Obter todos os novos campos da requisição
-    email = data.get('email')
-    password = data.get('password')
-    nome_completo = data.get('nomeCompleto')
-    cpf_cnpj = data.get('cpfCnpj')
-    telefone = data.get('telefone')
+    # Cria o usuário usando a classe Usuario
+    usuario = Usuario(
+        nome=data.get('nome'),
+        sobrenome=data.get('sobrenome'),
+        email=data.get('email'),
+        senha=data.get('senha'),
+        lembrar_de_mim=data.get('lembrar_de_mim', False),
+        nivel_de_acesso=data.get('nivel_de_acesso', 'user')
+    )
 
     # Validação básica
-    if not all([email, password, nome_completo, cpf_cnpj, telefone]):
+    if not all([usuario.email, usuario.senha, usuario.nome, usuario.sobrenome]):
         return jsonify({"message": "Todos os campos são obrigatórios"}), 400
     
     credentials = read_user_credentials()
-    if email in credentials:
+    if usuario.email in credentials:
         return jsonify({"message": "Este email já está cadastrado."}), 409
     
     try:
-        # 2. Salvar login e senha com papel 'user' no logins.txt
-        log_entry = f"{email}:{password}:user\n"
+        # Salva login e senha com papel 'user' no logins.txt
+        log_entry = f"{usuario.email}:{usuario.senha}:user\n"
         with open(LOGINS_FILE_PATH, "a") as f:
             f.write(log_entry)
         
-        # 3. Salvar os dados adicionais em um arquivo de perfil separado
-        sanitized_email = sanitize_email_for_filename(email)
+        # Salva os dados adicionais em um arquivo de perfil separado
+        sanitized_email = sanitize_email_for_filename(usuario.email)
         user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
-        os.makedirs(user_dir, exist_ok=True) # Cria o diretório do usuário se não existir
+        os.makedirs(user_dir, exist_ok=True)
 
         profile_file_path = os.path.join(user_dir, 'profile.txt')
         with open(profile_file_path, 'w', encoding='utf-8') as f:
-            f.write(f"Nome: {nome_completo}\n")
-            f.write(f"CPF/CNPJ: {cpf_cnpj}\n")
-            f.write(f"Telefone: {telefone}\n")
+            f.write(f"Nome: {usuario.nome}\n")
+            f.write(f"Sobrenome: {usuario.sobrenome}\n")
+            f.write(f"Email: {usuario.email}\n")
+            f.write(f"Lembrar_de_mim: {usuario.lembrar_de_mim}\n")
+            f.write(f"Nivel_de_acesso: {usuario.nivel_de_acesso}\n")
+            # Adicione outros campos se necessário
 
         return jsonify({"message": "Usuário cadastrado com sucesso! Faça o login agora."}), 201
         
     except Exception as e:
-        # Em caso de erro, é uma boa prática logar o erro no servidor
         app.logger.error(f"Erro ao registrar usuário: {str(e)}")
         return jsonify({"message": f"Erro interno ao salvar dados."}), 500
-
 
 @app.route('/api/profile-data', methods=['GET'])
 def get_profile_data():
@@ -329,6 +329,33 @@ def listar_formularios():
                 })
 
     return jsonify(formularios)
+
+@app.route('/api/user/<email>', methods=['GET'])
+def get_user(email):
+    """Busca os dados do usuário do arquivo de perfil e retorna como JSON."""
+    sanitized_email = sanitize_email_for_filename(email)
+    user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
+    profile_file_path = os.path.join(user_dir, 'profile.txt')
+    if not os.path.exists(profile_file_path):
+        return jsonify({"message": "Usuário não encontrado."}), 404
+
+    # Lê os dados do arquivo e cria uma instância de Usuario
+    dados = {}
+    with open(profile_file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if ':' in line:
+                chave, valor = line.strip().split(':', 1)
+                dados[chave.strip().lower()] = valor.strip()
+    usuario = Usuario(
+        nome=dados.get('nome', ''),
+        sobrenome=dados.get('sobrenome', ''),
+        email=dados.get('email', email),
+        senha='',  # Não retorna a senha por segurança
+        lembrar_de_mim=dados.get('lembrar_de_mim', 'False') == 'True',
+        nivel_de_acesso=dados.get('nivel_de_acesso', 'user')
+    )
+    # Adicione o método to_dict() na classe Usuario se ainda não existir
+    return jsonify(usuario.to_dict())
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
