@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ListarFormulariosPage from "./ListarFormulariosPage";
+import ListarFormulariosPage from "../ListarFormulariosPage";
 
 // Mock global da função fetch antes de todos os testes
 beforeEach(() => {

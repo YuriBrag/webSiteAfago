@@ -1,4 +1,3 @@
-# tests/test_app.py
 import pytest
 import json
 from app import app # Importe seu app

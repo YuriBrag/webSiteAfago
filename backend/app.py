@@ -5,7 +5,6 @@ import os
 import re 
 import datetime
 
-
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)

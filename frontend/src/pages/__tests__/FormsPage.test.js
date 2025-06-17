@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import FormsPage from "./FormsPage";
+import FormsPage from "../FormsPage";
 
 // Testes para a FormsPage
 describe("FormsPage", () => {
