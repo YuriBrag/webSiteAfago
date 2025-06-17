@@ -29,12 +29,16 @@ def test_register_success(client, mocker): # mocker é para simular (mockar)
     mocker.patch("app.read_user_credentials", return_value={})
 
     response = client.post('/api/register', json={
-        "email": "newuser@example.com",
-        "password": "password123"
+        "email": "existing@example.com",
+        "password": "password123",
+        "nomeCompleto": "Usuário Existente Teste",
+        "cpfCnpj": "000.111.222-33",
+        "telefone": "31777776666"
     })
-    
+
     assert response.status_code == 201 # 201 Created
-    assert b"Usu\u00e1rio cadastrado com sucesso" in response.data # b"" para bytes
+    data = response.get_json()
+    assert data["message"] == "Usuário cadastrado com sucesso! Faça o login agora."
 
 # Teste para o endpoint de registro (usuário já existe)
 def test_register_user_exists(client, mocker):
@@ -44,8 +48,12 @@ def test_register_user_exists(client, mocker):
 
     response = client.post('/api/register', json={
         "email": "existing@example.com",
-        "password": "password123"
+        "password": "password123",
+        "nomeCompleto": "Usuário Existente Teste",
+        "cpfCnpj": "000.111.222-33",
+        "telefone": "31777776666"
     })
 
-    assert response.status_code == 409 # 409 Conflict
-    assert b"Este email j\u00e1 est\u00e1 cadastrado" in response.data
+    assert response.status_code == 409
+    data = response.get_json()
+    assert data["message"] == "Este email já está cadastrado."

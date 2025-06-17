@@ -4,3 +4,6 @@ cad@cad:123:user
 form@form.com:123:user
 aaa@aaa.com:123:user
 zeca@prod.com:Zeca:user
+gustavo@gmail.com:1234:user
+existing@example.com:password123:user
+gustavo@example.com:password123:user
