@@ -1,9 +1,12 @@
+from .telefone import Telefone
+
 class Usuario:
-    def __init__(self, nome, sobrenome, email, senha, lembrar_de_mim=False, nivel_de_acesso="user"):
+    def __init__(self, nome, sobrenome, email, senha, telefone: Telefone = None, lembrar_de_mim=False, nivel_de_acesso="user"):
         self.nome = nome
         self.sobrenome = sobrenome
         self.email = email
         self.senha = senha
+        self.telefone = telefone
         self.lembrar_de_mim = lembrar_de_mim
         self.nivel_de_acesso = nivel_de_acesso
 
@@ -19,6 +22,9 @@ class Usuario:
 
     def get_senha(self):
         return self.senha
+
+    def get_telefone(self):
+        return self.telefone
 
     def get_lembrar_de_mim(self):
         return self.lembrar_de_mim
@@ -39,6 +45,9 @@ class Usuario:
     def set_senha(self, senha):
         self.senha = senha
 
+    def set_telefone(self, telefone: Telefone):
+        self.telefone = telefone
+
     def set_lembrar_de_mim(self, lembrar_de_mim):
         self.lembrar_de_mim = lembrar_de_mim
 
@@ -47,13 +56,14 @@ class Usuario:
 
     def __repr__(self):
         return (f"Usuario(nome={self.nome!r}, sobrenome={self.sobrenome!r}, email={self.email!r}, "
-                f"lembrar_de_mim={self.lembrar_de_mim!r}, nivel_de_acesso={self.nivel_de_acesso!r})")
+                f"telefone={self.telefone!r}, lembrar_de_mim={self.lembrar_de_mim!r}, nivel_de_acesso={self.nivel_de_acesso!r})")
         
     def to_dict(self):
         return {
             "nome": self.nome,
             "sobrenome": self.sobrenome,
             "email": self.email,
+            "telefone": self.telefone.getFone() if self.telefone else None,
             "lembrar_de_mim": self.lembrar_de_mim,
             "nivel_de_acesso": self.nivel_de_acesso
         }
