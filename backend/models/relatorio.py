@@ -42,7 +42,7 @@ class RelatorioGrandeProdutor(RelatorioBase):
             raise ValueError("Todos os campos do relatório devem ser preenchidos.")
 
     def salvar(self):
-        # Implemente a lógica de persistência se necessário
+        # Implemente a logica de persistencia se necessario
         pass
 
     def to_dict(self):
@@ -63,5 +63,5 @@ class RelatorioFactory:
     def criar_relatorio(tipo, **kwargs):
         if tipo == 'grande_produtor':
             return RelatorioGrandeProdutor(**kwargs)
-        # Adicione outros tipos de relatório aqui se necessário
-        raise ValueError(f"Tipo de relatório desconhecido: {tipo}")
+        # Adicione outros tipos de relatorio aqui se necessario
+        raise ValueError(f"Tipo de relatorio desconhecido: {tipo}")

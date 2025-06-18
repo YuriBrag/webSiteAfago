@@ -30,7 +30,7 @@ def test_add_property_missing_fields(client):
     assert response.status_code == 400
     assert "necessários" in response.get_json()["message"]
 
-def test_add_property_invalid_tamanho(client):
+def test_add_property_invalid_size(client):
     data = {
         "email": "test@example.com",
         "nome": "Fazenda Teste",

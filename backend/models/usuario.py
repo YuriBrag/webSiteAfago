@@ -10,7 +10,7 @@ class Usuario:
         self.lembrar_de_mim = lembrar_de_mim
         self.nivel_de_acesso = nivel_de_acesso
 
-    # Métodos GET
+    # Metodos GET
     def get_nome(self):
         return self.nome
 
@@ -32,7 +32,7 @@ class Usuario:
     def get_nivel_de_acesso(self):
         return self.nivel_de_acesso
 
-    # Métodos SET
+    # Metodos SET
     def set_nome(self, nome):
         self.nome = nome
 

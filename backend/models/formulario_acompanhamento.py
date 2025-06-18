@@ -37,13 +37,13 @@ class FormularioAcompanhamento(FormularioBase):
 
     def validar(self):
         if self.efetividade is None or self.condicao_planta is None or self.ocorrencia_pragas is None or self.satisfacao_geral is None:
-            raise ValueError("Todos os campos devem ser preenchidos.")
+            raise ValueError("Todos os campos devem ser preenchidos.")  # <- mantido para mensagem ao usuario
 
     def salvar(self):
-        # Aqui você pode implementar a lógica de persistência (arquivo, banco, etc)
+        # Aqui voce pode implementar a logica de persistencia (arquivo, banco, etc)
         pass
 
-    # Métodos GET/SET e utilitários
+    # Metodos GET/SET e utilitarios
     def get_efetividade(self):
         return self.efetividade
     def get_condicao_planta(self):
@@ -76,8 +76,8 @@ class FormularioFactory:
     def criar_formulario(tipo, **kwargs):
         if tipo == 'acompanhamento':
             return FormularioAcompanhamento(**kwargs)
-        # Adicione outros tipos de formulário aqui se necessário
-        raise ValueError(f"Tipo de formulário desconhecido: {tipo}")
+        # Adicione outros tipos de formulario aqui se necessario
+        raise ValueError(f"Tipo de formulario desconhecido: {tipo}")
 
 
 def test_criacao_formulario_diferentes_valores():

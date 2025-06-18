@@ -11,7 +11,7 @@ class Propriedade:
         self.endereco = endereco
         self.areas = areas if areas is not None else []
 
-    # Métodos GET
+    # Metodos GET
     def get_nome(self):
         return self.nome
 
@@ -30,7 +30,7 @@ class Propriedade:
     def get_areas(self):
         return self.areas
 
-    # Métodos SET
+    # Metodos SET
     def set_nome(self, nome):
         self.nome = nome
 

@@ -7,7 +7,7 @@ class Area:
         self.cultura = cultura
         self.tempo_treinamento = tempo_treinamento
 
-    # Métodos GET
+    # Metodos GET
     def getTamanho(self):
         return self.tamanho
 
@@ -20,7 +20,7 @@ class Area:
     def getTempoTreinamento(self):
         return self.tempo_treinamento
 
-    # Métodos SET
+    # Metodos SET
     def setTamanho(self, tamanho):
         if not isinstance(tamanho, int) or tamanho <= 0:
             raise ValueError("Tamanho deve ser um inteiro positivo.")
