@@ -1,7 +1,7 @@
-from .telefone import Telefone
+from .telefone import TelefoneBase
 
 class Usuario:
-    def __init__(self, nome, sobrenome, email, senha, telefone: Telefone = None, lembrar_de_mim=False, nivel_de_acesso="user"):
+    def __init__(self, nome, sobrenome, email, senha, telefone: TelefoneBase = None, lembrar_de_mim=False, nivel_de_acesso="user"):
         self.nome = nome
         self.sobrenome = sobrenome
         self.email = email
@@ -45,7 +45,7 @@ class Usuario:
     def set_senha(self, senha):
         self.senha = senha
 
-    def set_telefone(self, telefone: Telefone):
+    def set_telefone(self, telefone: TelefoneBase):
         self.telefone = telefone
 
     def set_lembrar_de_mim(self, lembrar_de_mim):
