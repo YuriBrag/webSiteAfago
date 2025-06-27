@@ -1,0 +1,12 @@
+Tipo de Relatório: grande_produtor
+--------------------
+Data da Aplicação: 2025-06-18
+Área de Aplicação: 20 hectares
+Modo de Aplicação: spay
+Frequência de Aplicação: 1 vez por dia
+Cultura: tomate
+--------------------
+Data da Coleta: 2025-06-27
+Amostra Coletada: 1 folha
+Características da Amostra: seca
+Sintomas da Coleta: covid-19

@@ -1,0 +1,12 @@
+Tipo de Relatório: grande_produtor
+--------------------
+Data da Aplicação: 2025-06-18
+Área de Aplicação: 20 hectares
+Modo de Aplicação: spray
+Frequência de Aplicação: 1 vez por dia
+Cultura: tomate
+--------------------
+Data da Coleta: 2025-06-28
+Amostra Coletada: teste
+Características da Amostra: teste
+Sintomas da Coleta: teste

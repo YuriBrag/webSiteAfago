@@ -8,6 +8,7 @@ import datetime
 from models.usuario import Usuario
 from models.propriedade import Propriedade
 from models.area import Area
+from models.relatorio import RelatorioFactory
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -311,6 +312,56 @@ def add_area():
 
     return jsonify({"message": "Área adicionada com sucesso!"}), 201
 
+@app.route('/api/relatorios', methods=['POST'])
+def salvar_relatorio():
+    """Recebe e salva os dados do relatório do grande produtor."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Dados do formulário não recebidos."}), 400
+
+    try:
+        # --- CORREÇÃO PRINCIPAL AQUI ---
+        # 1. Pega o valor de 'tipo' e o REMOVE do dicionário 'data'.
+        tipo_relatorio = data.pop('tipo', None)
+        if not tipo_relatorio:
+            return jsonify({"message": "O campo 'tipo' do relatório é obrigatório."}), 400
+
+        # 2. Agora chamamos a Factory. 'data' não tem mais a chave 'tipo'.
+        novo_relatorio = RelatorioFactory.criar_relatorio(
+            tipo=tipo_relatorio,
+            **data
+        )
+
+        novo_relatorio.validar()
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        filename = f"relatorio_grande_produtor_{timestamp}.txt"
+        caminho_arquivo = os.path.join(PASTA_RESPOSTAS_DIR, filename)
+
+        with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+            f.write(f"Tipo de Relatório: {tipo_relatorio}\n")
+            f.write("-" * 20 + "\n")
+            # Usa os atributos do objeto 'novo_relatorio' que ele conhece
+            f.write(f"Data da Aplicação: {novo_relatorio.data_aplicacao}\n")
+            f.write(f"Área de Aplicação: {novo_relatorio.area_aplicacao}\n")
+            f.write(f"Modo de Aplicação: {novo_relatorio.modo_aplicacao}\n")
+            f.write(f"Frequência de Aplicação: {novo_relatorio.frequencia_aplicacao}\n")
+            f.write(f"Cultura: {novo_relatorio.cultura}\n")
+            f.write("-" * 20 + "\n")
+            # --- CORREÇÃO SECUNDÁRIA AQUI ---
+            # Para os campos que não estão no modelo, pegamos direto do dicionário 'data'
+            f.write(f"Data da Coleta: {data.get('data_coleta', 'N/A')}\n")
+            f.write(f"Amostra Coletada: {data.get('amostra_coletada', 'N/A')}\n")
+            f.write(f"Características da Amostra: {data.get('caracteristicas_amostra', 'N/A')}\n")
+            f.write(f"Sintomas da Coleta: {data.get('sintomas_coleta', 'N/A')}\n")
+
+        return jsonify({"message": "Relatório salvo com sucesso!"}), 201
+
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    except Exception as e:
+        app.logger.error(f"Erro ao salvar relatório: {str(e)}")
+        return jsonify({"message": "Erro interno ao processar o relatório."}), 500
 
 @app.route('/api/resp-formulario', methods=['POST'])
 @token_required # Agora este decorator já fornece g.user_email
