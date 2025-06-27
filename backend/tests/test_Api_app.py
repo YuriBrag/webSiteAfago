@@ -2,7 +2,7 @@ import pytest
 import json
 from app import app # Importe seu app
 
-# Fixture para criar um cliente de teste para todas as funções de teste
+# Fixture para criar um cliente de teste para todas as funcoes de teste
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -20,14 +20,14 @@ def test_hello_endpoint(client):
     assert data["message"] == "Olá! O frontend está conectado com o backend Flask!"
 
 # Teste para o endpoint de registro (caso de sucesso)
-def test_register_success(client, mocker): # mocker é para simular (mockar)
-    """Testa o registro de um novo usuário com sucesso."""
+def test_register_success(client, mocker): # mocker e para simular (mockar)
+    """Testa o registro de um novo usuario com sucesso."""
     mocker.patch("builtins.open", mocker.mock_open())
     mocker.patch("app.read_user_credentials", return_value={})
 
     response = client.post('/api/register', json={
         "email": "existing@example.com",
-        "senha": "password123",  # Corrigido para 'senha'
+        "senha": "password123", 
         "nome": "Usuário",
         "sobrenome": "Teste",
         "lembrar_de_mim": False,
@@ -38,9 +38,9 @@ def test_register_success(client, mocker): # mocker é para simular (mockar)
     data = response.get_json()
     assert data["message"] == "Usuário cadastrado com sucesso! Faça o login agora."
 
-# Teste para o endpoint de registro (usuário já existe)
+# Teste para o endpoint de registro (usuario ja existe)
 def test_register_user_exists(client, mocker):
-    """Testa a tentativa de registro de um email que já existe."""
+    """Testa a tentativa de registro de um email que ja existe."""
     mocker.patch("app.read_user_credentials", return_value={"existing@example.com": {"password": "pass", "role": "user"}})
 
     response = client.post('/api/register', json={
@@ -105,7 +105,7 @@ def test_get_profile_data_success(client, mocker):
     sanitized_email = "test_example_com"
     user_dir = f"/algum/caminho/user_data/{sanitized_email}"
 
-    # Mock da função de sanitização
+    # Mock da funcao de sanitizacao
     mocker.patch("app.sanitize_email_for_filename", return_value=sanitized_email)
     # Mock dos caminhos dos arquivos
     mocker.patch("os.path.join", side_effect=lambda *args: "/".join(args))
@@ -137,4 +137,3 @@ def test_get_profile_data_missing_email(client):
     data = response.get_json()
     assert response.status_code == 400
     assert data["message"] == "Email do usuário é necessário"
-

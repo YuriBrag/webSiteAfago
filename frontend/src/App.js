@@ -11,6 +11,7 @@ import ListarFormulariosPage from './pages/ListarFormulariosPage.js';
 import OutraPagina from './pages/OutraPagina.js';
 import AdminProtectedRoute from './components/AdminProtectedRoute.js';
 import AdminPage from './pages/AdminPage.js'
+import RelatoriosPage from './pages/RelatoriosPage';
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                     <Route path="/perfil" element={<ProfilePage />} />
                     <Route path="/responder-formulario" element={<ResponderFormularioPage />} />
                     <Route path="/listar-formularios" element={<ListarFormulariosPage />} />
+                    <Route path="/relatorios" element={<RelatoriosPage />} />
                 </Route>
                 {/* Rota Protegida para Administradores */}
                 <Route element={<AdminProtectedRoute />}>
