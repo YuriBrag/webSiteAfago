@@ -1,0 +1,11 @@
+--------------------
+Data da Aplicação: 2025-06-18
+Área de Aplicação: 20 hectares
+Modo de Aplicação: teste
+Frequência de Aplicação: teste
+Cultura: teste
+--------------------
+Data da Coleta: 2025-06-27
+Amostra Coletada: teste
+Características da Amostra: teste
+Sintomas da Coleta: teste

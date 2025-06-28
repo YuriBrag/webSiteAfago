@@ -339,7 +339,7 @@ def salvar_relatorio():
         caminho_arquivo = os.path.join(PASTA_RESPOSTAS_DIR, filename)
 
         with open(caminho_arquivo, 'w', encoding='utf-8') as f:
-            f.write(f"Tipo de Relatório: {tipo_relatorio}\n")
+            #f.write(f"Tipo de Relatório: {tipo_relatorio}\n")
             f.write("-" * 20 + "\n")
             # Usa os atributos do objeto 'novo_relatorio' que ele conhece
             f.write(f"Data da Aplicação: {novo_relatorio.data_aplicacao}\n")
@@ -362,6 +362,48 @@ def salvar_relatorio():
     except Exception as e:
         app.logger.error(f"Erro ao salvar relatório: {str(e)}")
         return jsonify({"message": "Erro interno ao processar o relatório."}), 500
+    
+def parse_report_content(content):
+    """Converte o conteúdo de texto de um relatório em um dicionário."""
+    report_data = {}
+    lines = content.strip().split('\n')
+    for line in lines:
+        if ':' in line:
+            key, value = line.split(':', 1)
+            # Converte a chave para um formato padronizado (ex: 'Data da Aplicação' -> 'data_da_aplicacao')
+            key_formatted = key.strip().lower().replace(' ', '_').replace(':', '')
+            report_data[key_formatted] = value.strip()
+    return report_data
+
+@app.route('/api/admin/relatorios', methods=['GET'])
+@admin_required # Protege a rota para que apenas admins possam acessá-la
+def get_all_relatorios():
+    """Busca e retorna todos os relatórios de grande produtor."""
+    relatorios = []
+    
+    if not os.path.exists(PASTA_RESPOSTAS_DIR):
+        return jsonify([])
+
+    # Ordena os arquivos para mostrar os mais recentes primeiro
+    for nome_arquivo in sorted(os.listdir(PASTA_RESPOSTAS_DIR), reverse=True):
+        # Filtra para pegar apenas os relatórios que nos interessam
+        if nome_arquivo.startswith("relatorio_grande_produtor_"):
+            try:
+                caminho = os.path.join(PASTA_RESPOSTAS_DIR, nome_arquivo)
+                with open(caminho, 'r', encoding='utf-8') as f:
+                    conteudo_texto = f.read()
+                    dados_relatorio = parse_report_content(conteudo_texto)
+                    
+                    relatorios.append({
+                        "id": nome_arquivo, # Usa o nome do arquivo como um ID único
+                        "dados": dados_relatorio,
+                        "raw_content": conteudo_texto # Envia o texto bruto também, se necessário
+                    })
+            except Exception as e:
+                app.logger.error(f"Erro ao processar o arquivo de relatório {nome_arquivo}: {e}")
+                continue # Pula para o próximo arquivo em caso de erro
+
+    return jsonify(relatorios)
 
 @app.route('/api/resp-formulario', methods=['POST'])
 @token_required # Agora este decorator já fornece g.user_email
@@ -405,6 +447,38 @@ def listar_formularios():
                 })
 
     return jsonify(formularios)
+
+@app.route('/api/admin/users/<string:email>', methods=['PUT'])
+@admin_required 
+def update_user_role(email):
+    """Atualiza o nível de acesso (role) de um usuário."""
+    data = request.get_json()
+    new_role = data.get('role')
+
+    if not new_role or new_role not in ['user', 'admin']:
+        return jsonify({'message': 'Nível de acesso inválido.'}), 400
+
+    credentials = read_user_credentials()
+    
+    # Verifica se o usuário a ser editado existe
+    if email not in credentials:
+        return jsonify({'message': 'Usuário não encontrado.'}), 404
+
+    # Atualiza o nível de acesso
+    credentials[email]['role'] = new_role
+
+    try:
+        updated_lines = []
+        for user_email, user_data in credentials.items():
+            updated_lines.append(f"{user_email}:{user_data['password']}:{user_data['role']}\n")
+        
+        with open(LOGINS_FILE_PATH, "w") as f:
+            f.writelines(updated_lines)
+
+        return jsonify({'message': f'Nível de acesso de {email} atualizado para {new_role}.'}), 200
+    except Exception as e:
+        app.logger.error(f"Erro ao reescrever o arquivo de logins: {e}")
+        return jsonify({'message': 'Erro interno ao salvar as alterações.'}), 500
 
 @app.route('/api/user/<email>', methods=['GET'])
 def get_user(email):
