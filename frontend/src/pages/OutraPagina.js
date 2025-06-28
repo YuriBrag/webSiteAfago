@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
+import paginaemconstruçao from "../assets/paginaemconstruçao.webp";
 
 function OutraPagina() {
 	return (
-		<div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+		<div
+			  className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-fixed relative"
+			  style={{ backgroundImage: `url(${paginaemconstruçao})` }}
+			>
+		<div className="min-h-screen flex flex-col items-center justify-center p-4 font-sans">
 			<header className="text-center mb-10">
 				<h1 className="text-5xl font-bold text-purple-600">
 					Pagina em Construcao
@@ -26,6 +31,7 @@ function OutraPagina() {
 					reservados.
 				</p>
 			</footer>
+		</div>
 		</div>
 	);
 }

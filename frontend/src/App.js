@@ -12,6 +12,7 @@ import OutraPagina from './pages/OutraPagina.js';
 import AdminProtectedRoute from './components/AdminProtectedRoute.js';
 import AdminPage from './pages/AdminPage.js'
 import RelatoriosPage from './pages/RelatoriosPage';
+import RelatoriosAdminPage from './pages/RelatoriosAdminPage';
 
 function App() {
     return (
@@ -35,6 +36,7 @@ function App() {
                 {/* Rota Protegida para Administradores */}
                 <Route element={<AdminProtectedRoute />}>
                     <Route path="/admin" element={<AdminPage />} />
+                    <Route path="/relatorios-admin" element={<RelatoriosAdminPage />} />
                 </Route>
             </Routes>
         </Router>
