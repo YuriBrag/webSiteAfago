@@ -175,16 +175,15 @@ def register():
     data = request.get_json()
     # Cria o usuário usando a classe Usuario
     usuario = Usuario(
-        nome=data.get('nome'),
-        sobrenome=data.get('sobrenome'),
+        nome=data.get('nomeCompleto'),
         email=data.get('email'),
-        senha=data.get('senha'),
+        senha=data.get('password'),
         lembrar_de_mim=data.get('lembrar_de_mim', False),
         nivel_de_acesso=data.get('nivel_de_acesso', 'user')
     )
 
     # Validação básica
-    if not all([usuario.email, usuario.senha, usuario.nome, usuario.sobrenome]):
+    if not all([usuario.email, usuario.senha, usuario.nome]):
         return jsonify({"message": "Todos os campos são obrigatórios"}), 400
     
     credentials = read_user_credentials()
@@ -205,7 +204,6 @@ def register():
         profile_file_path = os.path.join(user_dir, 'profile.txt')
         with open(profile_file_path, 'w', encoding='utf-8') as f:
             f.write(f"Nome: {usuario.nome}\n")
-            f.write(f"Sobrenome: {usuario.sobrenome}\n")
             f.write(f"Email: {usuario.email}\n")
             f.write(f"Lembrar_de_mim: {usuario.lembrar_de_mim}\n")
             f.write(f"Nivel_de_acesso: {usuario.nivel_de_acesso}\n")
@@ -498,13 +496,10 @@ def get_user(email):
                 dados[chave.strip().lower()] = valor.strip()
     usuario = Usuario(
         nome=dados.get('nome', ''),
-        sobrenome=dados.get('sobrenome', ''),
-        email=dados.get('email', email),
-        senha='',  # Não retorna a senha por segurança
+        email=dados.get('email', ''),
         lembrar_de_mim=dados.get('lembrar_de_mim', 'False') == 'True',
         nivel_de_acesso=dados.get('nivel_de_acesso', 'user')
     )
-    # Adicione o método to_dict() na classe Usuario se ainda não existir
     return jsonify(usuario.to_dict())
 
 @app.route('/', defaults={'path': ''})

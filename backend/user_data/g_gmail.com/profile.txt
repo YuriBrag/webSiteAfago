@@ -1,0 +1,4 @@
+Nome: Gustavo Henrique
+Email: g@gmail.com
+Lembrar_de_mim: False
+Nivel_de_acesso: user

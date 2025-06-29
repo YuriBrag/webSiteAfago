@@ -1,9 +1,8 @@
 from .telefone import TelefoneBase
 
 class Usuario:
-    def __init__(self, nome, sobrenome, email, senha, telefone: TelefoneBase = None, lembrar_de_mim=False, nivel_de_acesso="user"):
+    def __init__(self, nome, email, senha, telefone: TelefoneBase = None, lembrar_de_mim=False, nivel_de_acesso="user"):
         self.nome = nome
-        self.sobrenome = sobrenome
         self.email = email
         self.senha = senha
         self.telefone = telefone
@@ -13,9 +12,6 @@ class Usuario:
     # Metodos GET
     def get_nome(self):
         return self.nome
-
-    def get_sobrenome(self):
-        return self.sobrenome
 
     def get_email(self):
         return self.email
@@ -36,9 +32,6 @@ class Usuario:
     def set_nome(self, nome):
         self.nome = nome
 
-    def set_sobrenome(self, sobrenome):
-        self.sobrenome = sobrenome
-
     def set_email(self, email):
         self.email = email
 
@@ -55,13 +48,12 @@ class Usuario:
         self.nivel_de_acesso = nivel_de_acesso
 
     def __repr__(self):
-        return (f"Usuario(nome={self.nome!r}, sobrenome={self.sobrenome!r}, email={self.email!r}, "
+        return (f"Usuario(nome={self.nome!r}, email={self.email!r}, "
                 f"telefone={self.telefone!r}, lembrar_de_mim={self.lembrar_de_mim!r}, nivel_de_acesso={self.nivel_de_acesso!r})")
         
     def to_dict(self):
         return {
             "nome": self.nome,
-            "sobrenome": self.sobrenome,
             "email": self.email,
             "telefone": self.telefone.getFone() if self.telefone else None,
             "lembrar_de_mim": self.lembrar_de_mim,

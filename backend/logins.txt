@@ -7,3 +7,4 @@ zeca@prod.com:Zeca:user
 gustavo@gmail.com:1234:user
 existing@example.com:password123:user
 gustavo@example.com:password123:user
+g@gmail.com:123:user
