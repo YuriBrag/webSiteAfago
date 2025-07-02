@@ -31,14 +31,14 @@ function Navbar() {
         }
     };
 
-    const handleScrollToArea = () => {
+    const handleScrollToServicos = () => {
         if (location.pathname === '/') {
-            const section = document.getElementById('area');
+            const section = document.getElementById('servicos');
             if (section) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         } else {
-            navigate('/', { state: { scrollTo: 'area' } });
+            navigate('/', { state: { scrollTo: 'servicos' } });
         }
     };
 
@@ -103,7 +103,7 @@ function Navbar() {
                     <div className="hidden md:flex flex-1 justify-center items-center space-x-6">
                         <button onClick={handleScrollToInicio} className={navLinkClasses}>Inicio</button>
                         <button onClick={handleScrollToSobre} className={navLinkClasses}>Sobre</button>
-                        <button onClick={handleScrollToArea} className={navLinkClasses}>Áreas de atuação</button>
+                        <button onClick={handleScrollToServicos} className={navLinkClasses}>Serviços</button>
                         <button onClick={handleScrollToContact} className={navLinkClasses}> Contatos </button>
                         
                         {token ? (
@@ -136,7 +136,7 @@ function Navbar() {
                     <button onClick={() => handleMobileClick(handleScrollToInicio)} className={`${mobileNavLinkClasses} w-full text-left`}>Início</button>
                     {/* <Link to="/outra-pagina" className={mobileNavLinkClasses} onClick={() => handleMobileClick()}>Serviços</Link> */}
                     <button onClick={() => handleMobileClick(handleScrollToSobre)} className={`${mobileNavLinkClasses} w-full text-left`}>Sobre</button>
-                    <button onClick={() => handleMobileClick(handleScrollToArea)} className={`${mobileNavLinkClasses} w-full text-left`}>Áreas de atuação</button>
+                    <button onClick={() => handleMobileClick(handleScrollToServicos)} className={`${mobileNavLinkClasses} w-full text-left`}>Serviços</button>
                     <button onClick={() => handleMobileClick(handleScrollToContact)} className={`${mobileNavLinkClasses} w-full text-left`}>Contatos</button>
                 
                     {token ? (

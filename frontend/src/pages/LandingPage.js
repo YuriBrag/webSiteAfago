@@ -4,6 +4,59 @@ import icone from "../assets/icone.png";
 import backgroundImage1 from "../assets/background_lp.jpg";
 import backgroundImage2 from "../assets/background_lp_2.jpg";
 
+import rafaelProfileImage from '../assets/rafael.jpeg'; 
+import polianeProfileImage from '../assets/poliane.jpeg';
+import luanaProfileImage from '../assets/luana.jpeg';
+
+
+const teamMembers = [
+    {
+        name: "Dr. Rafael Reis de Rezende",
+        role: "Pesquisador",
+        email: "rafaela@email.com",
+        imageUrl: rafaelProfileImage,
+    },
+    {
+        name: "Dra. Poliane Alfenas Zerbini",
+        role: "Pesquisadora",
+        email: "poliane@email.com",
+        imageUrl: polianeProfileImage,
+    },
+    {
+        name: "Dra. Luana Lucas Dutra",
+        role: "Pesquisadora",
+        email: "luana@email.com",
+        imageUrl: luanaProfileImage,
+    },
+];
+
+const TeamSection = () => (
+    <section id="equipe" className="w-full bg-white py-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">Nossa Equipe</h2>
+            <p className="text-lg text-gray-600 mb-12">
+                Conheça os especialistas por trás da A.FAGO.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {teamMembers.map((member) => (
+                    <div key={member.name} className="flex flex-col items-center">
+                        <img
+                            className="w-40 h-40 object-cover rounded-full border-4 border-gray-200 shadow-lg mb-4"
+                            src={member.imageUrl}
+                            alt={`Foto de perfil de ${member.name}`}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900">{member.name}</h3>
+                        <p className="text-green-700 font-medium">{member.role}</p>
+                        <a href={`mailto:${member.email}`} className="text-sm text-gray-500 hover:underline">
+                            {member.email}
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+);
+
 const ContactSection = () => (
     <section id="contatos" className="w-full bg-gray-100 py-16 px-4 sm:px-6 p-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -149,16 +202,49 @@ function LandingPage() {
 					</main>
 				</div>
 			</section>
+
+			<section 
+        id="servicos" 
+        className="w-full bg-no-repeat bg-cover bg-center bg-fixed relative py-16 px-4 sm:px-6"
+        style={{ backgroundImage: `url(${backgroundImage2})` }}
+    >
+        <div className="absolute inset-0 bg-black opacity-60 z-0"></div>
+        <div className="relative z-10 max-w-7xl mx-auto text-center text-white">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-12">Nossos Serviços</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+                    <h3 className="text-xl font-semibold mb-2">Coquetéis Bacteriofágicos</h3>
+                    <p className="text-gray-200">Desenvolvimento personalizado de soluções para controle de fitopatógenos bacterianos.</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+                    <h3 className="text-xl font-semibold mb-2">Consultoria Científica</h3>
+                    <p className="text-gray-200">Avaliação técnica de produtos biológicos com base em métodos analíticos avançados.</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+                    <h3 className="text-xl font-semibold mb-2">Certificação de Bioinsumos</h3>
+                    <p className="text-gray-200">Análise de qualidade e caracterização técnica para validação de produtos virais.</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+                    <h3 className="text-xl font-semibold mb-2">Pesquisa Colaborativa</h3>
+                    <p className="text-gray-200">Parcerias para desenvolvimento de novos insumos biológicos e transferência de tecnologia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
 			<section id="area" className="p-10">
 				<div className="flex flex-col items-center bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full text-center md:text-left">
-					<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6 mt-10">
+					<h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-1 sm:mb-6 mt-10">
 						Áreas de atuação
 					</h2>
-					<p className="text-gray-600 mb-4 text-sm sm:text-base min-h-[80px] sm:min-h-[100px]">
-						Lorem ipsum dolor sit amet. Eos odio distinctio aut internos neque et
-						quod quasi ea repudiandae quod. Aut sint provident et cupiditate
-						soluta ut ipsam expedita et maiores magnam...
-					</p>
+	
+					<header className="relative z-10 text-center mb-8 sm:mb-12 w-full p-4">
+						<p className="text-2 sm:text-2xl  text-black mb-4 sm:mb-1">
+						A A.fago atua no desenvolvimento e produção de bioinsumos agrícolas baseados em bacteriófagos para o controle de doenças bacterianas, com foco inicial no setor florestal.
+						Também oferece soluções sob demanda para outros patógenos e culturas, combinando biotecnologia, microbiologia e bioinformática de forma sustentável e personalizada
+
+						</p>
+					</header>
 				</div>
 			</section>
 
@@ -182,14 +268,16 @@ function LandingPage() {
 						Perspectivas futuras
 					</h2>
 					<header className="relative z-10 text-center mb-8 sm:mb-12 w-full p-4">
-						<p className="text-2 sm:text-3xl  text-black mb-4 sm:mb-1">
-							Lorem ipsum dolor sit amet. Et porro aliquam eos fugit
-							necessitatibus qui vitae cupiditate sit dolores laudantium aut
-							consequatur quibusdam...
+						<p className="text-2 sm:text-2xl  text-black mb-4 sm:mb-1">
+							Nosso objetivo é consolidar a A.fago como referência nacional em biocontrole bacteriano, expandindo para novos segmentos agrícolas e ampliando nosso 
+							portfólio de coquetéis antivirais. Pretendemos investir em infraestrutura própria, aumentar a equipe científica, oferecer serviços de certificação em 
+							parceria com órgãos reguladores e introduzir soluções inéditas para o mercado.
+
 						</p>
 					</header>
 				</div>
 			</section>
+			<TeamSection />
 			<ContactSection />
 
 			<footer className="mt-auto pt-10 pb-6 text-center text-gray-500 text-sm w-full">
