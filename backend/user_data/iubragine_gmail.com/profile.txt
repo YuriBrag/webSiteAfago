@@ -1,0 +1,4 @@
+Nome: Yuri Cardoso Bragine
+Email: iubragine@gmail.com
+Lembrar_de_mim: False
+Nivel_de_acesso: user

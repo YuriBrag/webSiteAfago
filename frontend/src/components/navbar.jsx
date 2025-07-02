@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     
     const navigate = useNavigate();
-
+    const location = useLocation();
     const token = localStorage.getItem('authToken');
     const userRole = localStorage.getItem('userRole');
 
@@ -18,6 +18,39 @@ function Navbar() {
     
         navigate('/entrar');
         window.location.reload();
+    };
+
+    const handleScrollToArea = () => {
+        if (location.pathname === '/') {
+            const section = document.getElementById('area');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            navigate('/', { state: { scrollTo: 'area' } });
+        }
+    };
+
+    const handleScrollToSobre = () => {
+        if (location.pathname === '/') {
+            const section = document.getElementById('sobre');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            navigate('/', { state: { scrollTo: 'sobre' } });
+        }
+    };
+
+    const handleScrollToContact = () => {
+        if (location.pathname === '/') {
+            const section = document.getElementById('contatos');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            navigate('/', { state: { scrollTo: 'contatos' } });
+        }
     };
 
     useEffect(() => {
@@ -58,8 +91,9 @@ function Navbar() {
                     </div>
                     <div className="hidden md:flex flex-1 justify-center items-center space-x-6">
                         <Link to="/" className={navLinkClasses} onClick={() => setIsOpen(false)}>Início</Link>
-                        <Link to="/outra-pagina" className={navLinkClasses} onClick={() => setIsOpen(false)}>Serviços</Link>
-                        <Link to="/contatos" className={navLinkClasses} onClick={() => setIsOpen(false)}>Contatos</Link>
+                        <button onClick={handleScrollToSobre} className={navLinkClasses}>Sobre</button>
+                        <button onClick={handleScrollToArea} className={navLinkClasses}>Area de Atuação</button>
+                        <button onClick={handleScrollToContact} className={navLinkClasses}> Contatos </button>
                         
                         {token ? (
                             <>
@@ -90,7 +124,9 @@ function Navbar() {
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-brand-green">
                     <Link to="/" className={mobileNavLinkClasses} onClick={() => handleMobileClick()}>Início</Link>
                     <Link to="/outra-pagina" className={mobileNavLinkClasses} onClick={() => handleMobileClick()}>Serviços</Link>
-                    <Link to="/contatos" className={mobileNavLinkClasses} onClick={() => handleMobileClick()}>Contatos</Link>
+                    <button onClick={() => handleMobileClick(handleScrollToSobre)} className={`${mobileNavLinkClasses} w-full text-left`}>Sobre</button>
+                    <button onClick={() => handleMobileClick(handleScrollToArea)} className={`${mobileNavLinkClasses} w-full text-left`}>Area de Atuação</button>
+                    <button onClick={() => handleMobileClick(handleScrollToContact)} className={`${mobileNavLinkClasses} w-full text-left`}>Contatos</button>
                 
                     {token ? (
                         <>

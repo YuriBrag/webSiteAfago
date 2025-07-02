@@ -1,0 +1,11 @@
+--------------------
+Data da Aplicação: 2025-06-29
+Área de Aplicação: 10 hec
+Modo de Aplicação: Difusao
+Frequência de Aplicação: 1 a 3 dias
+Cultura: Batat
+--------------------
+Data da Coleta: 2025-06-29
+Amostra Coletada: Batata folha
+Características da Amostra: Saudavel
+Sintomas da Coleta: Saudavel
