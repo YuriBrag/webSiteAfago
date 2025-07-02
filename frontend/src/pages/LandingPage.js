@@ -96,18 +96,20 @@ function LandingPage() {
 	return (
 		<div className="min-h-screen flex flex-col font-sans min-w-[360px]">
 			{/* Hero com efeito parallax desativado no mobile */}
-			<div
-				className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
-				bg-contain md:bg-cover md:bg-fixed"
-				style={{ backgroundImage: `url(${backgroundImage1})` }}
-			>
-				<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-				<header className="relative z-10 mb-8 sm:mb-12 w-full p-4">
-					<h2 className="text-2xl sm:text-4xl lg:text-5xl font-medium text-white">
-						Biotecnologia inteligente <br /> para um futuro sustentável
-					</h2>
-				</header>
-			</div>
+			<section id="inicio" >
+				<div
+					className="w-full min-h-[300px] md:min-h-screen bg-no-repeat bg-center relative flex flex-col justify-center items-center
+					bg-contain md:bg-cover md:bg-fixed"
+					style={{ backgroundImage: `url(${backgroundImage1})` }}
+				>
+					<div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+					<header className="relative z-10 mb-8 sm:mb-12 w-full p-4">
+						<h2 className="text-2xl sm:text-4xl lg:text-5xl font-medium text-white">
+							Biotecnologia inteligente <br /> para um futuro sustentável
+						</h2>
+					</header>
+				</div>
+			</section>
 			<section id="sobre" className="p-10">
 				<div className="flex flex-col md:flex-row items-center md:items-start gap-6 lg:gap-10 bg-transparent p-0 sm:p-4 md:p-6 rounded-lg w-full max-w-5xl lg:max-w-6xl mx-auto">
 					<div className="w-full md:w-2/5 flex justify-center md:justify-start mb-6 md:mb-0 mt-5">
