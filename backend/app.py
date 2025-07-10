@@ -217,7 +217,7 @@ def register():
 
 @app.route('/api/profile-data', methods=['GET'])
 def get_profile_data():
-    """Busca os dados de propriedades e áreas para um usuário."""
+    """Busca os dados de propriedades e áreas para um usuário e os formata como JSON."""
     user_email = request.args.get('email')
     if not user_email:
         return jsonify({"message": "Email do usuário é necessário"}), 400
@@ -228,23 +228,45 @@ def get_profile_data():
     properties = []
     areas = []
 
+    # Lê e formata as propriedades
     try:
         prop_file_path = os.path.join(user_dir, 'properties.txt')
         if os.path.exists(prop_file_path):
-            with open(prop_file_path, 'r') as f:
-                properties = [line.strip() for line in f.readlines()]
-    except IOError:
-        pass
+            with open(prop_file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    parts = line.strip().split(';')
+                    if len(parts) >= 5: # Garante que a linha tem todos os dados
+                        properties.append({
+                            'nome': parts[0],
+                            'tamanho': parts[1],
+                            'clima': parts[2],
+                            'solo': parts[3],
+                            'endereco': parts[4]
+                        })
+    except IOError as e:
+        app.logger.error(f"Erro ao ler arquivo de propriedades para {user_email}: {e}")
 
+    # Lê e formata as áreas
     try:
         areas_file_path = os.path.join(user_dir, 'areas.txt')
         if os.path.exists(areas_file_path):
-            with open(areas_file_path, 'r') as f:
-                areas = [line.strip() for line in f.readlines()]
-    except IOError:
-        pass
+            with open(areas_file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    parts = line.strip().split(';')
+                    if len(parts) >= 5: # Garante que a linha tem todos os dados
+                        areas.append({
+                            'propertyName': parts[0],
+                            'tamanho': parts[1],
+                            'tipo_aplicacao': parts[2],
+                            'cultura': parts[3],
+                            'tempo_tratamento': parts[4]
+                        })
+    except IOError as e:
+        app.logger.error(f"Erro ao ler arquivo de áreas para {user_email}: {e}")
 
     return jsonify({"properties": properties, "areas": areas})
+
+
 
 @app.route('/api/properties', methods=['POST'])
 def add_property():

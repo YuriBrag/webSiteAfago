@@ -1,0 +1,7 @@
+Usuário: testeCad@cad.com
+Horário: 2025-07-10 17:24:39
+Efetividade: 5
+Estado da Planta: Sadia
+Houve Pragas: Sim
+Descrição das Pragas: testCad
+Satisfação: 5
