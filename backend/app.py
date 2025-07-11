@@ -4,8 +4,9 @@ from functools import wraps
 import os
 import re 
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+import database
 
-from models.usuario import Usuario
 from models.propriedade import Propriedade
 from models.area import Area
 from models.relatorio import RelatorioFactory
@@ -14,26 +15,16 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
+# Inicializa o banco de dados ao iniciar a aplicação
+database.init_db()
+
+# Constantes de diretório que ainda são usadas para outras funcionalidades
 USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
-LOGINS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logins.txt")
 PASTA_RESPOSTAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "respostas_formularios")
 
 def sanitize_email_for_filename(email):
     return re.sub(r'[^a-zA-Z0-9_.-]', '_', email)
 
-def read_user_credentials():
-    credentials = {}
-    if not os.path.exists(LOGINS_FILE_PATH):
-        return credentials
-    with open(LOGINS_FILE_PATH, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                parts = line.split(':', 2)
-                if len(parts) == 3:
-                    email, password, role = parts
-                    credentials[email] = {'password': password, 'role': role}
-    return credentials
 
 def token_required(f):
     """Verifica o token e extrai os dados do usuário da requisição."""
@@ -46,7 +37,6 @@ def token_required(f):
         if not token or token != "dummy-test-token-12345":
             return jsonify({'message': 'Token inválido ou ausente!'}), 401
         
-        # Extrai o email do corpo (POST) ou da URL (GET)
         user_email = None
         if request.method == 'GET':
             user_email = request.args.get('userEmail')
@@ -56,20 +46,20 @@ def token_required(f):
         if not user_email:
             return jsonify({'message': 'Email do usuário não fornecido na requisição.'}), 400
         
-        # Armazena os dados no objeto 'g' para uso na rota
         g.user_email = user_email
         return f(*args, **kwargs)
     return decorated
 
 def admin_required(f):
-    """Verifica se o usuário tem permissões de administrador."""
+    """Verifica se o usuário tem permissões de administrador consultando o DB."""
     @wraps(f)
-    @token_required # Reutiliza a lógica do token_required
+    @token_required
     def decorated(*args, **kwargs):
-        credentials = read_user_credentials()
-        user_data = credentials.get(g.user_email)
+        conn = database.get_db_connection()
+        user = conn.execute("SELECT role FROM usuarios WHERE email = ?", (g.user_email,)).fetchone()
+        conn.close()
         
-        if not user_data or user_data.get('role') != 'admin':
+        if not user or user['role'] != 'admin':
             return jsonify({'message': 'Acesso negado: Requer privilégios de administrador.'}), 403
         
         return f(*args, **kwargs)
@@ -77,21 +67,12 @@ def admin_required(f):
 
 
 def get_user_name_by_email(email):
-    """Busca o nome completo de um usuário a partir do seu e-mail."""
-    try:
-        sanitized_email = sanitize_email_for_filename(email)
-        profile_path = os.path.join(USER_DATA_DIR, sanitized_email, 'profile.txt')
-        if os.path.exists(profile_path):
-            with open(profile_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    # Procura pela linha que começa com "Nome:"
-                    if line.strip().startswith("Nome:"):
-                        # Retorna o valor após "Nome: ", removendo espaços extras
-                        return line.strip()[6:].strip()
-    except Exception as e:
-        app.logger.error(f"Erro ao buscar nome para o email {email}: {e}")
-        return "Usuário Desconhecido"
-    # Retorna um valor padrão se o arquivo ou a linha não forem encontrados
+    """Busca o nome completo de um usuário a partir do seu e-mail no banco de dados."""
+    conn = database.get_db_connection()
+    user = conn.execute("SELECT nome_completo FROM usuarios WHERE email = ?", (email,)).fetchone()
+    conn.close()
+    if user:
+        return user['nome_completo']
     return "Nome não encontrado"
 
 @app.route('/api/hello', methods=['GET'])
@@ -99,10 +80,8 @@ def hello():
     """Endpoint de teste para verificar a conexão com o frontend."""
     return jsonify({"message": "Olá! O frontend está conectado com o backend Flask!"})
 
-
-
 @app.route('/api/admin/forms', methods=['GET'])
-@admin_required # A proteção continua a mesma
+@admin_required
 def get_all_forms():
     """Retorna uma lista de todos os formulários submetidos, agora incluindo o nome do usuário."""
     formularios = []
@@ -140,80 +119,72 @@ def get_all_forms():
                 
     return jsonify(formularios)
 
+
 @app.route('/api/admin/users', methods=['GET'])
 @admin_required
 def get_all_users():
-    credentials = read_user_credentials()
-    users_list = [{'email': email, 'role': data['role']} for email, data in credentials.items()]
+    """Busca todos os usuários do banco de dados."""
+    conn = database.get_db_connection()
+    users_cursor = conn.execute("SELECT id, email, nome_completo, role FROM usuarios ORDER BY nome_completo").fetchall()
+    conn.close()
+    users_list = [dict(row) for row in users_cursor]
     return jsonify(users_list)
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    """Função de login atualizada para retornar o papel (role) do usuário."""
+    """Função de login que verifica as credenciais no banco de dados."""
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
     if not email or not password:
         return jsonify({"message": "Email e senha são obrigatórios"}), 400
     
-    credentials = read_user_credentials()
-    user_data = credentials.get(email)
+    conn = database.get_db_connection()
+    user = conn.execute("SELECT * FROM usuarios WHERE email = ?", (email,)).fetchone()
+    conn.close()
 
-    if user_data and user_data['password'] == password:
+    if user and check_password_hash(user['senha'], password):
         return jsonify({
             "message": "Login bem-sucedido!",
-            "token": "dummy-test-token-12345", # Em produção, seria um JWT
-            "userName": email.split('@')[0],
-            "userEmail": email,
-            "userRole": user_data['role'] 
+            "token": "dummy-test-token-12345",
+            "userName": user['nome_completo'],
+            "userEmail": user['email'],
+            "userRole": user['role'] 
         }), 200
     else:
         return jsonify({"message": "Credenciais incorretas."}), 401
 
 @app.route('/api/register', methods=['POST'])
 def register():
+    """Registra um novo usuário no banco de dados."""
     data = request.get_json()
-    # Cria o usuário usando a classe Usuario
-    usuario = Usuario(
-        nome=data.get('nomeCompleto'),
-        email=data.get('email'),
-        senha=data.get('password'),
-        lembrar_de_mim=data.get('lembrar_de_mim', False),
-        nivel_de_acesso=data.get('nivel_de_acesso', 'user')
-    )
+    
+    nome = data.get('nomeCompleto')
+    email = data.get('email')
+    password = data.get('password')
+    cpf_cnpj = data.get('cpfCnpj')
+    telefone = data.get('telefone')
 
-    # Validação básica
-    if not all([usuario.email, usuario.senha, usuario.nome]):
-        return jsonify({"message": "Todos os campos são obrigatórios"}), 400
+    if not all([email, password, nome]):
+        return jsonify({"message": "Nome, email e senha são obrigatórios"}), 400
     
-    credentials = read_user_credentials()
-    if usuario.email in credentials:
-        return jsonify({"message": "Este email já está cadastrado."}), 409
+    hashed_password = generate_password_hash(password)
     
+    conn = database.get_db_connection()
     try:
-        # Salva login e senha com papel 'user' no logins.txt
-        log_entry = f"{usuario.email}:{usuario.senha}:user\n"
-        with open(LOGINS_FILE_PATH, "a") as f:
-            f.write(log_entry)
-        
-        # Salva os dados adicionais em um arquivo de perfil separado
-        sanitized_email = sanitize_email_for_filename(usuario.email)
-        user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
-        os.makedirs(user_dir, exist_ok=True)
-
-        profile_file_path = os.path.join(user_dir, 'profile.txt')
-        with open(profile_file_path, 'w', encoding='utf-8') as f:
-            f.write(f"Nome: {usuario.nome}\n")
-            f.write(f"Email: {usuario.email}\n")
-            f.write(f"Lembrar_de_mim: {usuario.lembrar_de_mim}\n")
-            f.write(f"Nivel_de_acesso: {usuario.nivel_de_acesso}\n")
-            # Adicione outros campos se necessário
-
+        conn.execute(
+            "INSERT INTO usuarios (nome_completo, email, senha, cpf_cnpj, telefone) VALUES (?, ?, ?, ?, ?)",
+            (nome, email, hashed_password, cpf_cnpj, telefone)
+        )
+        conn.commit()
         return jsonify({"message": "Usuário cadastrado com sucesso! Faça o login agora."}), 201
-        
+    except conn.IntegrityError:
+        return jsonify({"message": "Este email ou CPF/CNPJ já está cadastrado."}), 409
     except Exception as e:
         app.logger.error(f"Erro ao registrar usuário: {str(e)}")
-        return jsonify({"message": f"Erro interno ao salvar dados."}), 500
+        return jsonify({"message": "Erro interno ao salvar dados."}), 500
+    finally:
+        conn.close()
 
 @app.route('/api/profile-data', methods=['GET'])
 def get_profile_data():
@@ -298,7 +269,7 @@ def add_property():
     with open(prop_file_path, 'a') as f:
         f.write(f"{propriedade.get_nome()};{propriedade.get_tamanho()};{propriedade.get_clima()};{propriedade.get_solo()};{propriedade.get_endereco()}\n")
 
-    return jsonify({"message": "Propriedade adicionada com sucesso!"}), 201
+    return jsonify({"message": "Propriedade adicionada com sucesso!"}, 201)
 
 @app.route('/api/areas', methods=['POST'])
 def add_area():
@@ -330,7 +301,7 @@ def add_area():
     with open(areas_file_path, 'a') as f:
         f.write(f"{property_name};{area.getTamanho()};{area.getTipoAplicacao()};{area.getCultura()};{area.getTempoTreinamento()}\n")
 
-    return jsonify({"message": "Área adicionada com sucesso!"}), 201
+    return jsonify({"message": "Área adicionada com sucesso!"}, 201)
 
 @app.route('/api/relatorios', methods=['POST'])
 def salvar_relatorio():
@@ -468,61 +439,40 @@ def listar_formularios():
 
     return jsonify(formularios)
 
+
 @app.route('/api/admin/users/<string:email>', methods=['PUT'])
 @admin_required 
 def update_user_role(email):
-    """Atualiza o nível de acesso (role) de um usuário."""
+    """Atualiza o nível de acesso (role) de um usuário no banco de dados."""
     data = request.get_json()
     new_role = data.get('role')
 
     if not new_role or new_role not in ['user', 'admin']:
         return jsonify({'message': 'Nível de acesso inválido.'}), 400
 
-    credentials = read_user_credentials()
+    conn = database.get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE usuarios SET role = ? WHERE email = ?", (new_role, email))
+    conn.commit()
     
-    # Verifica se o usuário a ser editado existe
-    if email not in credentials:
+    if cursor.rowcount == 0:
+        conn.close()
         return jsonify({'message': 'Usuário não encontrado.'}), 404
-
-    # Atualiza o nível de acesso
-    credentials[email]['role'] = new_role
-
-    try:
-        updated_lines = []
-        for user_email, user_data in credentials.items():
-            updated_lines.append(f"{user_email}:{user_data['password']}:{user_data['role']}\n")
-        
-        with open(LOGINS_FILE_PATH, "w") as f:
-            f.writelines(updated_lines)
-
-        return jsonify({'message': f'Nível de acesso de {email} atualizado para {new_role}.'}), 200
-    except Exception as e:
-        app.logger.error(f"Erro ao reescrever o arquivo de logins: {e}")
-        return jsonify({'message': 'Erro interno ao salvar as alterações.'}), 500
+    
+    conn.close()
+    return jsonify({'message': f'Nível de acesso de {email} atualizado para {new_role}.'}), 200
 
 @app.route('/api/user/<email>', methods=['GET'])
 def get_user(email):
-    """Busca os dados do usuário do arquivo de perfil e retorna como JSON."""
-    sanitized_email = sanitize_email_for_filename(email)
-    user_dir = os.path.join(USER_DATA_DIR, sanitized_email)
-    profile_file_path = os.path.join(user_dir, 'profile.txt')
-    if not os.path.exists(profile_file_path):
+    """Busca os dados do usuário do banco de dados e retorna como JSON."""
+    conn = database.get_db_connection()
+    user = conn.execute("SELECT id, nome_completo, email, cpf_cnpj, telefone, role FROM usuarios WHERE email = ?", (email,)).fetchone()
+    conn.close()
+
+    if not user:
         return jsonify({"message": "Usuário não encontrado."}), 404
 
-    # Lê os dados do arquivo e cria uma instância de Usuario
-    dados = {}
-    with open(profile_file_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            if ':' in line:
-                chave, valor = line.strip().split(':', 1)
-                dados[chave.strip().lower()] = valor.strip()
-    usuario = Usuario(
-        nome=dados.get('nome', ''),
-        email=dados.get('email', ''),
-        lembrar_de_mim=dados.get('lembrar_de_mim', 'False') == 'True',
-        nivel_de_acesso=dados.get('nivel_de_acesso', 'user')
-    )
-    return jsonify(usuario.to_dict())
+    return jsonify(dict(user))
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
